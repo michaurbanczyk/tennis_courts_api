@@ -1,0 +1,44 @@
+[tool.poetry]
+name = "tennis_courts_api"
+version = "0.1.0"
+description = "Tennis Courts Api"
+authors = ["Michal Urbanczyk <michaurbanczyk@gmail.com>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.115.5"
+uvicorn = "^0.32.1"
+
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^4.0.1"
+black = "^24.10.0"
+flake8 = "^7.1.1"
+isort = "^5.13.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.black]
+line-length = 119
+preview = true
+exclude = '''/(
+    \.git
+    | \.tox
+    | \.venv
+    | \.svn
+    | \.egg
+    | \.idea
+    | \.vscode
+    | build
+    | dist
+)/'''
+
+[tool.isort]
+profile = 'black'
+src_paths = ["src", "tests"]
