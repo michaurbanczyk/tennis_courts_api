@@ -1,14 +1,11 @@
 import uvicorn
 from fastapi import FastAPI
 
+from app.routes.courts import courts_router
+
 app = FastAPI()
 
-
-@app.get("/")
-async def hello_world():
-    return {"response": "API is working!"}
-
+app.include_router(courts_router)
 
 if __name__ == "__main__":
-
     uvicorn.run(app)
