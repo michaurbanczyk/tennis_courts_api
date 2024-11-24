@@ -1,3 +1,7 @@
+import json
+
+from bson import ObjectId
+
 from app.repositories.courts import CourtsRepository
 
 
@@ -5,16 +9,20 @@ class CourtsService:
     def __init__(self, courts_repository: CourtsRepository = CourtsRepository()):
         self.courts_repository = courts_repository
 
-    async def get_all(self):
-        courts = await self.courts_repository.get_all()
-        all_courts = [
-            {
-                "id": str(court["_id"]),
-                "name": court["name"],
-                "url": court["url"],
-                "occupancyUrl": court["occupancyUrl"],
-            }
-            for court in courts
-        ]
+    def get_all(self, query_params=None):
 
-        return all_courts
+        courts = []
+        if query_params:
+            ids = query_params.get("ids")
+            names = query_params.get("names")
+            if ids:
+                ids = json.loads(ids)
+                object_ids = [ObjectId(id_) for id_ in ids]
+                courts = self.courts_repository.get_by_id(object_ids)
+            if names:
+                names = json.loads(names)
+                courts = self.courts_repository.get_by_name(names)
+        else:
+            courts = self.courts_repository.get_all()
+
+        return courts
