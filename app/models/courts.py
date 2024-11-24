@@ -4,8 +4,8 @@ from pydantic import BaseModel
 class Court(BaseModel):
     id: str
     name: str
-    freeSlots: list[dict]
-    lastUpdated: str
+    url: str
+    occupancyUrl: str
 
 
 class CourtResponse(BaseModel):

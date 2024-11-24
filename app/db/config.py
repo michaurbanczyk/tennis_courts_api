@@ -10,4 +10,5 @@ uri = "mongodb+srv://" + username + ":" + password + "@" + cluster
 
 client = pymongo.MongoClient(uri)
 
-tennis_courts_collection = client["tennis"]["courts"]
+tennis_courts_collection = client["tennis"]["courts_availability"]
+all_tennis_courts_collection = client["tennis"]["all_courts"]
