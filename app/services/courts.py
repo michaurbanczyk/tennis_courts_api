@@ -2,6 +2,7 @@ import json
 
 from bson import ObjectId
 
+from app.models.courts import to_courts_response
 from app.repositories.courts import CourtsRepository
 
 
@@ -25,4 +26,4 @@ class CourtsService:
         else:
             courts = self.courts_repository.get_all()
 
-        return courts
+        return to_courts_response(courts) if courts else []

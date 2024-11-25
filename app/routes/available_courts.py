@@ -1,9 +1,6 @@
 from fastapi import APIRouter, Request
 
-from app.models.available_courts import (
-    AvailableCourtResponse,
-    to_available_courts_response,
-)
+from app.models.available_courts import AvailableCourtResponse
 from app.services.available_courts import AvailableCourtsService
 
 available_courts_router = APIRouter(
@@ -17,10 +14,16 @@ def get_available_courts(request: Request):
     query_params = request.query_params
 
     available_courts_service = AvailableCourtsService()
-    all_available_courts_service = available_courts_service.get_all(query_params)
+    all_available_courts = available_courts_service.get_all(query_params)
 
-    return {
-        "availableCourts": (
-            to_available_courts_response(all_available_courts_service) if all_available_courts_service else []
-        )
-    }
+    return {"availableCourts": all_available_courts}
+
+
+@available_courts_router.get("/by-dates")
+def get_available_courts_by_dates(request: Request):
+    query_params = request.query_params
+
+    available_courts_service = AvailableCourtsService()
+    all_available_courts_by_dates = available_courts_service.get_all_by_dates(query_params)
+
+    return {"availableCourts": all_available_courts_by_dates}

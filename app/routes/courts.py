@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request
 
-from app.models.courts import CourtResponse, to_courts_response
+from app.models.courts import CourtResponse
 from app.services.courts import CourtsService
 
 courts_router = APIRouter(
@@ -16,4 +16,4 @@ def get_courts(request: Request):
     courts_service = CourtsService()
     all_courts = courts_service.get_all(query_params)
 
-    return {"courts": to_courts_response(all_courts) if all_courts else []}
+    return {"courts": all_courts}
