@@ -1,6 +1,6 @@
 import os
 
-from app.db.config import all_tennis_courts_collection
+from app.db.config import client
 from app.utils.utils import open_json_file
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
@@ -22,6 +22,7 @@ def get_available_courts(all_courts):
 def run_get_tenis4u_available_courts():
     tenis4u_courts = open_json_file(current_directory, "tenis4u_supported_courts.json")
     available_courts = get_available_courts(tenis4u_courts)
+    all_tennis_courts_collection = client["tennis"]["allCourts"]
     all_tennis_courts_collection.drop()
     all_tennis_courts_collection.insert_many(available_courts)
 

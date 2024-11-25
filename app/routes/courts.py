@@ -10,7 +10,7 @@ courts_router = APIRouter(
 
 
 @courts_router.get("/", response_model=CourtResponse)
-def courts(request: Request):
+def get_courts(request: Request):
     query_params = request.query_params
 
     courts_service = CourtsService()
