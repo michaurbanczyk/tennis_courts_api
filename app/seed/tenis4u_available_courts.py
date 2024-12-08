@@ -13,6 +13,7 @@ def get_available_courts(all_courts):
             "name": court["name"],
             "url": f'https://app.tenis4u.pl/#/court/{court["id"]}',
             "occupancyUrl": f'https://api.tenis4u.pl/occupancy/{court["id"]}',
+            "img": court["miniature"],
         }
         for court in all_courts
         if "kraków" in court["address"].lower() or "wieliczka" in court["address"]
