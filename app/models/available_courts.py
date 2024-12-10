@@ -3,8 +3,16 @@ from pydantic import BaseModel
 
 class AvailableCourt(BaseModel):
     id: str
-    name: str
-    courts: list
+    date: str
+    clubName: str
+    url: str
+    img: str
+    courtName: str
+    courtType: str
+    duration: int
+    start: str
+    end: str
+    isLeagueSlot: bool
     lastUpdated: str
 
 
@@ -16,8 +24,16 @@ def to_available_courts_response(available_courts):
     return [
         {
             "id": str(ac["_id"]),
-            "name": ac["name"],
-            "courts": ac["courts"],
+            "date": ac["date"],
+            "clubName": ac["clubName"],
+            "url": ac["url"],
+            "img": ac["img"],
+            "courtName": ac["courtName"],
+            "courtType": ac["courtType"],
+            "duration": ac["duration"],
+            "start": ac["start"],
+            "end": ac["end"],
+            "isLeagueSlot": ac["isLeagueSlot"],
             "lastUpdated": ac["lastUpdated"],
         }
         for ac in available_courts

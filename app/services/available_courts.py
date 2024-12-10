@@ -1,7 +1,4 @@
-import json
 from datetime import datetime, timedelta
-
-from bson import ObjectId
 
 from app.models.available_courts import to_available_courts_response
 from app.repositories.available_courts import AvailableCourtsRepository
@@ -12,20 +9,7 @@ class AvailableCourtsService:
         self.available_courts_repository = available_courts_repository
 
     def get_all(self, query_params=None):
-
-        courts = []
-        if query_params:
-            ids = query_params.get("ids")
-            names = query_params.get("names")
-            if ids:
-                ids = json.loads(ids)
-                object_ids = [ObjectId(id_) for id_ in ids]
-                courts = self.available_courts_repository.get_by_id(object_ids)
-            if names:
-                names = json.loads(names)
-                courts = self.available_courts_repository.get_by_name(names)
-        else:
-            courts = self.available_courts_repository.get_all()
+        courts = self.available_courts_repository.get_all(query_params)
 
         return to_available_courts_response(courts) if courts else []
 
@@ -38,15 +22,25 @@ class AvailableCourtsService:
         for club in courts:
             club_name = club["name"]
             courts = club["courts"]
+            url = club["url"]
+            img = club["img"]
             for court in courts:
                 free_slots = court["freeSlots"]
                 court_name = court["name"]
+                type = court["type"]
                 if free_slots:
                     for slot in free_slots:
                         date = slot["date"]
                         total_free_slots = slot["totalFreeSlots"]
                         for tfs in total_free_slots:
                             if date in courts_by_dates.keys():
-                                courts_by_dates[date].append({**tfs, "name": club_name, "courtName": court_name})
+                                courts_by_dates[date].append({
+                                    **tfs,
+                                    "name": club_name,
+                                    "courtName": court_name,
+                                    "type": type,
+                                    "url": url,
+                                    "img": img,
+                                })
 
         return courts_by_dates
