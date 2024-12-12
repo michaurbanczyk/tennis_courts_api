@@ -3,13 +3,20 @@ from pydantic import BaseModel
 
 class Court(BaseModel):
     id: str
-    name: str
+    date: str
+    clubName: str
     url: str
-    occupancyUrl: str
     img: str
+    courtName: str
+    courtType: str
+    duration: int
+    start: str
+    end: str
+    isLeagueSlot: bool
+    lastUpdated: str
 
 
-class CourtResponse(BaseModel):
+class CourtsResponse(BaseModel):
     courts: list[Court]
 
 
@@ -17,10 +24,17 @@ def to_courts_response(courts):
     return [
         {
             "id": str(court["_id"]),
-            "name": court["name"],
+            "date": court["date"],
+            "clubName": court["clubName"],
             "url": court["url"],
-            "occupancyUrl": court["occupancyUrl"],
             "img": court["img"],
+            "courtName": court["courtName"],
+            "courtType": court["courtType"],
+            "duration": court["duration"],
+            "start": court["start"],
+            "end": court["end"],
+            "isLeagueSlot": court["isLeagueSlot"],
+            "lastUpdated": court["lastUpdated"],
         }
         for court in courts
     ]
