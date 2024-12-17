@@ -5,8 +5,16 @@ from app.utils.utils import open_json_file
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
 
+excluded_list = [
+    "Morelowa34Padel",
+    "SAO SPORTS HUB Piastowska",
+    "TCC Sport Resort BASEN+SPA"
+]
+
 
 def get_available_courts(all_courts):
+
+    excluded_list_lowered = [el.lower() for el in excluded_list]
 
     return [
         {
@@ -16,7 +24,7 @@ def get_available_courts(all_courts):
             "img": court["miniature"],
         }
         for court in all_courts
-        if "kraków" in court["address"].lower() or "wieliczka" in court["address"]
+        if any(city in court["address"].lower() for city in ("kraków", "wieliczka", "rudawa")) and court["name"].lower() not in excluded_list_lowered
     ]
 
 
