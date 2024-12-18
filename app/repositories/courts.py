@@ -7,8 +7,7 @@ from app.db.config import client
 class CourtsRepository:
     def __init__(self):
         self.db_client = client
-        # !TODO change the name of collection
-        self.courts = self.db_client["tennis"]["courtsAvailability2"]
+        self.courts = self.db_client["tennis"]["courts"]
 
     def get_all(self, query_params=None):
         if not query_params:
@@ -19,6 +18,8 @@ class CourtsRepository:
         max_duration = query_params.get("maxDuration")
         days = query_params.get("days")
         is_league_slot = query_params.get("isLeagueSlot")
+        starts_from = query_params.get("startsFrom")
+        ends_at = query_params.get("endsAt")
 
         query = {}
         if club_name:
@@ -38,5 +39,11 @@ class CourtsRepository:
 
         if is_league_slot:
             query["isLeagueSlot"] = json.loads(is_league_slot)
+
+        if starts_from:
+            query["startFloat"] = {"$gte": float(".".join(starts_from.split(":")))}
+
+        if ends_at:
+            query["endFloat"] = {"$lte": float(".".join(ends_at.split(":")))}
 
         return self.courts.find(query)

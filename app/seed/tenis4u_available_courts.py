@@ -5,16 +5,24 @@ from app.utils.utils import open_json_file
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
 
-excluded_list = [
-    "Morelowa34Padel",
-    "SAO SPORTS HUB Piastowska",
-    "TCC Sport Resort BASEN+SPA"
+favorite_list = [
+    "Rudawa Tennis Club",
+    "Sport Factory Park",
+    "Fame Sport Club",
+    "TCC Sport Resort KORTY",
+    "Magic Sports",
+    "Klub Sportowy Grzegórzecki - Flex Wysłouchów 34",
+    "PANTA REI",
+    "Korty Białoprądnicka",
+    "Park Wola Sodowa",
+    "Kort w Pękowicach",
+    "KSU Grzegórzecki",
 ]
 
 
 def get_available_courts(all_courts):
 
-    excluded_list_lowered = [el.lower() for el in excluded_list]
+    favorite_list_lowered = [el.lower() for el in favorite_list]
 
     return [
         {
@@ -24,14 +32,14 @@ def get_available_courts(all_courts):
             "img": court["miniature"],
         }
         for court in all_courts
-        if any(city in court["address"].lower() for city in ("kraków", "wieliczka", "rudawa")) and court["name"].lower() not in excluded_list_lowered
+        if court["name"].lower() in favorite_list_lowered
     ]
 
 
 def run_get_tenis4u_available_courts():
     tenis4u_courts = open_json_file(current_directory, "tenis4u_supported_courts.json")
     available_courts = get_available_courts(tenis4u_courts)
-    all_tennis_courts_collection = client["tennis"]["allCourts"]
+    all_tennis_courts_collection = client["tennis"]["clubs"]
     all_tennis_courts_collection.drop()
     all_tennis_courts_collection.insert_many(available_courts)
 

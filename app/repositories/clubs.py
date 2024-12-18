@@ -4,8 +4,7 @@ from app.db.config import client
 class ClubsRepository:
     def __init__(self):
         self.db_client = client
-        # !TODO change the name of collection
-        self.clubs_collection = self.db_client["tennis"]["allCourts"]
+        self.clubs_collection = self.db_client["tennis"]["clubs"]
 
     def get_all(self):
         return self.clubs_collection.find()
