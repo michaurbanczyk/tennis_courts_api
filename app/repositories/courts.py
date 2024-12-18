@@ -18,8 +18,7 @@ class CourtsRepository:
         max_duration = query_params.get("maxDuration")
         days = query_params.get("days")
         is_league_slot = query_params.get("isLeagueSlot")
-        starts_from = query_params.get("startsFrom")
-        ends_at = query_params.get("endsAt")
+        ranges = self._get_ranges(query_params)
 
         query = {}
         if club_name:
@@ -40,10 +39,21 @@ class CourtsRepository:
         if is_league_slot:
             query["isLeagueSlot"] = json.loads(is_league_slot)
 
-        if starts_from:
-            query["startFloat"] = {"$gte": float(".".join(starts_from.split(":")))}
-
-        if ends_at:
-            query["endFloat"] = {"$lte": float(".".join(ends_at.split(":")))}
+        if ranges:
+            iter_ranges = iter(ranges)
+            zipped = [(start, next(iter_ranges, "")) for start in iter_ranges]
+            query["$or"] = [
+                {
+                    "$and": [
+                        {"startFloat": {"$gte": float(".".join((z[0] if z[0] != "" else "00:00").split(":")))}},
+                        {"endFloat": {"$lte": float(".".join((z[1] if z[1] != "" else "23:59").split(":")))}}
+                    ]
+                } for z in zipped
+            ]
 
         return self.courts.find(query)
+
+    @staticmethod
+    def _get_ranges(query_params=None):
+        query_params_keys = list(query_params.keys())
+        return [query_params[key] for key in query_params_keys if "range" in key]
