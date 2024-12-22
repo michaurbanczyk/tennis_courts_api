@@ -1,3 +1,15 @@
+from enum import StrEnum
+
+
+class FetchingStatus(StrEnum):
+    STARTED = "Started"
+    SUCCESS = "Success"
+    ERROR = "Error"
+    IN_PROGRESS = "In Progress"
+    FINISHED = "Finished"
+    PREPARED = "Prepared"
+
+
 SUPPORTED_CLUBS = [
     "Rudawa Tennis Club",
     "Sport Factory Park",
