@@ -8,6 +8,7 @@ class RunLambdaStatusEnum(StrEnum):
     STARTED = "Started"
     SUCCESS = "Success"
     ERROR = "Error"
+    PARTIAL_ERROR = "Partial Error"
     IN_PROGRESS = "In Progress"
     FINISHED = "Finished"
     PREPARED = "Prepared"
