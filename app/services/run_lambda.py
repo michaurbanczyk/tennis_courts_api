@@ -21,7 +21,7 @@ class RunLambdaService:
         two_hours_delta = last_update_start_time + timedelta(hours=int(LAMBDA_RUN_INTERVAL))
         if current_time < two_hours_delta:
             raise HTTPException(
-                status_code=422,
+                status_code=400,
                 detail=(
                     f"Last update has been run at: {last_update_start_time.strftime('%H:%M:%S')}."
                     f" {LAMBDA_RUN_INTERVAL} hours have to passed to be able to run it again."
