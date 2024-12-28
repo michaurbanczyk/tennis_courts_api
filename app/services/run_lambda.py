@@ -4,7 +4,7 @@ import requests
 from fastapi import HTTPException
 
 from app.config import DATETIME_FORMAT, LAMBDA_RUN_ENDPOINT, LAMBDA_RUN_INTERVAL
-from app.models.run_lambda import RunLambdaStatusEnum, to_run_lambda_status_response
+from app.models.run_lambda import to_run_lambda_status_response
 from app.repositories.run_lambda import RunLambdaRepository
 
 
@@ -34,10 +34,6 @@ class RunLambdaService:
 
         if not response.ok:
             raise HTTPException(status_code=response.status_code, detail=response.text)
-
-        self.update_run_lambda_status(
-            status=RunLambdaStatusEnum.STARTED, lastUpdateStartTime=current_time.strftime(DATETIME_FORMAT)
-        )
 
         return {"info": "success", "status": "200"}
 
