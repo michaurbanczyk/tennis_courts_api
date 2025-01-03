@@ -18,6 +18,7 @@ class RunLambdaService:
         self.run_lambda_repository = run_lambda_repository
 
     def run_lambda(self):
+        print("SENDING REQUEST!")
         run_lambda_status = self.run_lambda_repository.get()
 
         current_time = datetime.now(timezone)
@@ -33,7 +34,6 @@ class RunLambdaService:
                 ),
             )
 
-        print("SENDING REQUEST!")
         response = requests.post(
             url=LAMBDA_RUN_ENDPOINT, headers={"X-Amz-Invocation-Type": "Event", "Content-Type": "application/json"}
         )
