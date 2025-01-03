@@ -3,12 +3,7 @@ from datetime import datetime, timedelta
 import requests
 from fastapi import HTTPException
 
-from app.config import (
-    DATETIME_FORMAT,
-    LAMBDA_RUN_ENDPOINT,
-    LAMBDA_RUN_INTERVAL,
-    timezone,
-)
+from app.config import DATETIME_FORMAT, LAMBDA_RUN_ENDPOINT, LAMBDA_RUN_INTERVAL
 from app.models.run_lambda import to_run_lambda_status_response
 from app.repositories.run_lambda import RunLambdaRepository
 
@@ -18,10 +13,9 @@ class RunLambdaService:
         self.run_lambda_repository = run_lambda_repository
 
     def run_lambda(self):
-        print("SENDING REQUEST!")
         run_lambda_status = self.run_lambda_repository.get()
 
-        current_time = datetime.now(timezone)
+        current_time = datetime.now()
         last_update_start_time = datetime.strptime(run_lambda_status.get("lastUpdateStartTime"), DATETIME_FORMAT)
 
         two_hours_delta = last_update_start_time + timedelta(hours=int(LAMBDA_RUN_INTERVAL))
