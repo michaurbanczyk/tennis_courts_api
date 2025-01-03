@@ -24,7 +24,6 @@ class RunLambdaService:
         current_time_as_date = datetime.strptime(current_time, DATETIME_FORMAT)
         last_update_start_time = datetime.strptime(run_lambda_status.get("lastUpdateStartTime"), DATETIME_FORMAT)
 
-        print(current_time_as_date)
         two_hours_delta = last_update_start_time + timedelta(hours=int(LAMBDA_RUN_INTERVAL))
         if current_time_as_date < two_hours_delta:
             raise HTTPException(
