@@ -33,6 +33,7 @@ class RunLambdaService:
                 ),
             )
 
+        print("SENDING REQUEST!")
         response = requests.post(
             url=LAMBDA_RUN_ENDPOINT, headers={"X-Amz-Invocation-Type": "Event", "Content-Type": "application/json"}
         )
