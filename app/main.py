@@ -7,6 +7,7 @@ from app.routes.clubs import clubs_router
 from app.routes.courts import courts_router
 from app.routes.courts_data_status import courts_data_status
 from app.routes.run_lambda import run_lambda_router
+from app.routes.tournaments import tournaments_router
 
 app = FastAPI()
 
@@ -21,6 +22,7 @@ app.include_router(courts_router)
 app.include_router(clubs_router)
 app.include_router(run_lambda_router)
 app.include_router(courts_data_status)
+app.include_router(tournaments_router)
 
 
 @app.post("/matches/")
