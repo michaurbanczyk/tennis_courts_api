@@ -2,7 +2,7 @@ from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.models.tournaments import Tournament
+from app.models.tournaments import Tournament, TournamentUpdate
 from app.services.tournaments import TournamentService
 
 tournaments_router = APIRouter(
@@ -27,5 +27,31 @@ async def create_tournament(tournament: Tournament, service: TournamentService =
 async def get_tournaments(service: TournamentService = Depends(get_service)):
     try:
         return await service.get_all_tournaments()
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@tournaments_router.delete("/{tournament_id}", response_model=dict)
+async def delete_tournament(tournament_id: str, service: TournamentService = Depends(get_service)):
+    try:
+        deleted_count = await service.delete_tournament(tournament_id)
+        if deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Tournament not found")
+        return {"message": "Tournament deleted successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@tournaments_router.patch("/{tournament_id}", response_model=Tournament)
+async def update_tournament(
+    tournament_id: str,
+    updated_data: TournamentUpdate,
+    service: TournamentService = Depends(get_service)
+):
+    try:
+        updated_tournament = await service.update_tournament(tournament_id, updated_data)
+        if not updated_tournament:
+            raise HTTPException(status_code=404, detail="Tournament not found")
+        return updated_tournament
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))

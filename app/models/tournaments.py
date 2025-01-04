@@ -21,3 +21,10 @@ class Tournament(BaseModel):
         "PLANNED", "STARTED", "FINISHED"
     ] = "PLANNED"
     isArchived: bool = False
+
+
+class TournamentUpdate(BaseModel):
+    name: Optional[str] = None
+    startDate: Optional[str] = None
+    endDate: Optional[str] = None
+    courts: Optional[List[Court]] = None
