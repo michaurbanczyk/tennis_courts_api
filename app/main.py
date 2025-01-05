@@ -2,6 +2,7 @@ import uvicorn
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.config import websocket_manager
 from app.db.config import connected_clients
 from app.routes.clubs import clubs_router
 from app.routes.courts import courts_router
@@ -9,10 +10,8 @@ from app.routes.courts_data_status import courts_data_status
 from app.routes.matches import matches_router
 from app.routes.run_lambda import run_lambda_router
 from app.routes.tournaments import tournaments_router
-from app.websocket_manager import WebSocketManager
 
 app = FastAPI()
-websocket_manager = WebSocketManager()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],  # Or ["*"] to allow all origins
@@ -32,12 +31,12 @@ app.include_router(matches_router)
 async def websocket_endpoint(websocket: WebSocket):
     """Handle WebSocket connections."""
     await websocket.accept()
-    connected_clients.append(websocket)
+    websocket_manager.active_connections.append(websocket)
     try:
         while True:
             await websocket.receive_text()  # Keep connection alive
     except Exception:
-        connected_clients.remove(websocket)
+        websocket_manager.active_connections.remove(websocket)
 
 
 if __name__ == "__main__":

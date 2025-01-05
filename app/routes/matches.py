@@ -2,10 +2,10 @@ from typing import List
 
 from fastapi import APIRouter, HTTPException, Depends
 
+from app.config import websocket_manager
 from app.models.common import Response
 from app.models.matches import MatchResults, MatchResponse, MatchBase
 from app.services.matches import MatchService
-from app.websocket_manager import WebSocketManager
 
 matches_router = APIRouter(
     prefix="/matches",
@@ -14,7 +14,7 @@ matches_router = APIRouter(
 
 
 def get_service():
-    return MatchService(WebSocketManager())
+    return MatchService(websocket_manager)
 
 
 @matches_router.get("/{match_id}", response_model=MatchResponse)
