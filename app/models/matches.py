@@ -1,14 +1,25 @@
+from enum import StrEnum
+from typing import List, Literal
 
 from pydantic import BaseModel
 
+
+class MatchStatus(StrEnum):
+    PLANNED = "Planned"
+    ONGOING = "Ongoing"
+    FINISHED = "Finished"
+    ARCHIVED = "Archived"
+    SUSPENDED = "Suspended"
+
+
 class Result(BaseModel):
-    player1: int
-    player2: int
+    player1: str
+    player2: str
 
 
 class MatchResults(BaseModel):
     sets: Result
-    games: Result
+    games: List[Result]
     points: Result
 
 
@@ -21,5 +32,6 @@ class MatchBase(BaseModel):
 
 class MatchResponse(MatchBase):
     id: str
+    status: Literal["Planned", "Ongoing", "Finished", "Archived", "Suspended"]
     results: MatchResults
 

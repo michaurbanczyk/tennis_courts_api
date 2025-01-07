@@ -1,9 +1,9 @@
-import uuid
 from typing import Optional
 
 from bson import ObjectId
 
 from app.db.config import client
+from app.models.matches import MatchStatus
 
 
 class MatchRepository:
@@ -13,18 +13,21 @@ class MatchRepository:
 
     async def create_match(self, match: dict) -> dict:
         match.update(
+            status=MatchStatus.PLANNED,
             results={
                 "sets": {
-                    "player1": 0,
-                    "player2": 0,
+                    "player1": "0",
+                    "player2": "0",
                 },
-                "games": {
-                    "player1": 0,
-                    "player2": 0,
-                },
+                "games": [
+                    {
+                        "player1": "0",
+                        "player2": "0",
+                    },
+                ],
                 "points": {
-                    "player1": 0,
-                    "player2": 0,
+                    "player1": "0",
+                    "player2": "0",
                 }
             }
         )
