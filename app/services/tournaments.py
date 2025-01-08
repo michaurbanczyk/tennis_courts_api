@@ -22,8 +22,15 @@ class TournamentService:
 
         return tournament_dict
 
-    async def get_all_tournaments(self) -> list:
-        return await self.repository.get_all_tournaments()
+    async def get_tournament(self, tournament_id: str):
+        tournament = await self.repository.get_tournament(tournament_id)
+        if tournament:
+            tournament["id"] = str(tournament["_id"])
+            del tournament["_id"]
+        return tournament
+
+    async def get_tournaments(self) -> list:
+        return await self.repository.get_tournaments()
 
     async def delete_tournament(self, tournament_id: str) -> int:
         return await self.repository.delete_tournament(tournament_id)

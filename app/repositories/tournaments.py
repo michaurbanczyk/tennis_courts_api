@@ -12,7 +12,11 @@ class TournamentsRepository:
 
         return await self.tournaments_collection.insert_one(tournament)
 
-    async def get_all_tournaments(self) -> list:
+    async def get_tournament(self, tournament_id: str):
+        tournament = await self.tournaments_collection.find_one({"_id": ObjectId(tournament_id)})
+        return tournament
+
+    async def get_tournaments(self):
         tournaments = await self.tournaments_collection.find().to_list(100)
         return [{**t, "id": str(t["_id"])} for t in tournaments]
 
