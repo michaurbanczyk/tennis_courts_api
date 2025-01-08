@@ -8,8 +8,6 @@ cluster = "cluster0.k2trl.mongodb.net"
 
 uri = "mongodb+srv://" + username + ":" + password + "@" + cluster
 
-# client = pymongo.MongoClient(uri)
-
 client = AsyncIOMotorClient(uri)
 db = client["tennis"]
 matches_collection = db["matches"]

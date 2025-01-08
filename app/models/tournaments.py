@@ -1,26 +1,58 @@
-from pydantic import BaseModel
+from enum import StrEnum
 from typing import List, Literal, Optional
+
+from pydantic import BaseModel
+
+
+class TournamentStatus(StrEnum):
+    PLANNED = "Planned"
+    ONGOING = "Ongoing"
+    FINISHED = "Finished"
+    ARCHIVED = "Archived"
+    SUSPENDED = "Suspended"
 
 
 class Court(BaseModel):
-    id: Optional[str] = None
     name: str
-    type: Literal[
-        "CLAY", "HARD", "GRASS", "ARTIFICIAL CLAY", "ARTIFICIAL GRASS", "CARPET", "CONCRETE", "OTHER"
-    ]
-    isSingleCourt: bool
+    type: Literal["Clay", "Hard", "Grass", "Artificial Clay", "Artificial Grass", "Carpet", "Concrete", "Other"]
 
 
-class Tournament(BaseModel):
-    id: Optional[str] = None
+class Player(BaseModel):
     name: str
+
+
+class Location(BaseModel):
+    clubName: str
+    courts: List[Court]
+
+
+class Configuration(BaseModel):
+    numberOfGames: int
+    isAdvantage: bool = True
+
+
+class Organizer(BaseModel):
+    name: str
+    email: str
+    phoneNumber: str
+
+
+class TournamentBase(BaseModel):
+    organizers: List[Organizer]
+    title: str
+    subtitle: str
     startDate: str
     endDate: str
-    courts: List[Court]
-    status: Literal[
-        "PLANNED", "STARTED", "FINISHED"
-    ] = "PLANNED"
-    isArchived: bool = False
+    locations: List[Location]
+    players: List[Player]
+    configuration: Configuration
+
+
+class TournamentResponse(TournamentBase):
+    id: str
+    status: Literal["Planned", "Ongoing", "Archived", "Suspended", "Finished"]
+    createdDate: str
+    lastUpdateDate: str
 
 
 class TournamentUpdate(BaseModel):

@@ -1,6 +1,7 @@
-import uuid
+import datetime
 
-from app.models.tournaments import Tournament, TournamentUpdate
+from app.config import DATETIME_FORMAT, timezone
+from app.models.tournaments import TournamentBase, TournamentStatus, TournamentUpdate
 from app.repositories.tournaments import TournamentsRepository
 
 
@@ -8,13 +9,18 @@ class TournamentService:
     def __init__(self):
         self.repository = TournamentsRepository()
 
-    async def create_tournament(self, tournament: Tournament) -> dict:
-        tournament_dict = tournament.model_dump()
+    async def create_tournament(self, tournament: TournamentBase) -> dict:
+        current_time = datetime.datetime.now(timezone).strftime(DATETIME_FORMAT)
+        tournament_dict = {
+            **tournament.model_dump(),
+            "status": TournamentStatus.PLANNED,
+            "createdDate": current_time,
+            "lastUpdateDate": current_time,
+        }
+        result = await self.repository.create_tournament(tournament_dict)
+        tournament_dict["id"] = str(result.inserted_id)
 
-        for court in tournament_dict["courts"]:
-            court["id"] = str(uuid.uuid4())
-
-        return await self.repository.create_tournament(tournament_dict)
+        return tournament_dict
 
     async def get_all_tournaments(self) -> list:
         return await self.repository.get_all_tournaments()

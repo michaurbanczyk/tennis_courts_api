@@ -8,10 +8,9 @@ class TournamentsRepository:
         self.db_client = client
         self.tournaments_collection = self.db_client["tennis"]["tournaments"]
 
-    async def create_tournament(self, tournament: dict) -> dict:
-        result = await self.tournaments_collection.insert_one(tournament)
-        tournament["_id"] = str(result.inserted_id)
-        return tournament
+    async def create_tournament(self, tournament: dict):
+
+        return await self.tournaments_collection.insert_one(tournament)
 
     async def get_all_tournaments(self) -> list:
         tournaments = await self.tournaments_collection.find().to_list(100)
@@ -23,9 +22,7 @@ class TournamentsRepository:
 
     async def update_tournament(self, tournament_id: str, updated_data: dict) -> dict:
         result = await self.tournaments_collection.find_one_and_update(
-            {"_id": ObjectId(tournament_id)},
-            {"$set": updated_data},
-            return_document=True
+            {"_id": ObjectId(tournament_id)}, {"$set": updated_data}, return_document=True
         )
         if result:
             result["id"] = str(result["_id"])
