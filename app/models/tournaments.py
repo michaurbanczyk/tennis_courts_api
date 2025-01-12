@@ -1,9 +1,8 @@
+from datetime import datetime
 from enum import StrEnum
 from typing import List, Literal, Optional
 
-from datetime import datetime
-
-from pydantic import BaseModel, Field, validator, field_validator
+from pydantic import BaseModel, Field, field_validator
 
 from app.config import DATETIME_FORMAT
 
