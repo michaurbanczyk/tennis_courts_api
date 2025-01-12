@@ -1,7 +1,11 @@
 from enum import StrEnum
 from typing import List, Literal, Optional
 
-from pydantic import BaseModel
+from datetime import datetime
+
+from pydantic import BaseModel, Field, validator, field_validator
+
+from app.config import DATETIME_FORMAT
 
 
 class TournamentStatus(StrEnum):
@@ -26,33 +30,36 @@ class Location(BaseModel):
     courts: List[Court]
 
 
-class Configuration(BaseModel):
-    numberOfGames: int
-    isAdvantage: bool = True
-
-
 class Organizer(BaseModel):
-    name: str
-    email: str
-    phoneNumber: str
+    name: str = Field(...)
+    email: str = Field(...)
+    phoneNumber: str = Field(...)
 
 
 class TournamentBase(BaseModel):
     organizers: List[Organizer]
-    title: str
-    subtitle: str
-    startDate: str
-    endDate: str
+    title: str = Field(...)
+    subtitle: Optional[str] = None
+    startDate: datetime
+    endDate: datetime
     locations: List[Location]
     players: List[Player]
-    configuration: Configuration
+
+    @field_validator("startDate", "endDate", mode="before")
+    def validate_date_format(cls, value: str) -> datetime:
+        if isinstance(value, datetime):
+            return value
+        try:
+            return datetime.strptime(value, DATETIME_FORMAT)
+        except ValueError:
+            raise ValueError(f"Date format must be {DATETIME_FORMAT}, got {value}")
 
 
 class TournamentResponse(TournamentBase):
     id: str
     status: Literal["Planned", "Ongoing", "Archived", "Suspended", "Finished"]
-    createdDate: str
-    lastUpdateDate: str
+    createdDate: datetime
+    lastUpdateDate: datetime
 
 
 class TournamentUpdate(BaseModel):
