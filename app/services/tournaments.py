@@ -1,6 +1,5 @@
 import datetime
 
-from app.config import DATETIME_FORMAT, timezone
 from app.models.tournaments import TournamentBase, TournamentStatus, TournamentUpdate
 from app.repositories.tournaments import TournamentsRepository
 
@@ -10,7 +9,7 @@ class TournamentService:
         self.repository = TournamentsRepository()
 
     async def create_tournament(self, tournament: TournamentBase) -> dict:
-        current_time = datetime.datetime.now(timezone).strftime(DATETIME_FORMAT)
+        current_time = datetime.datetime.now(datetime.timezone.utc)
         tournament_dict = {
             **tournament.model_dump(),
             "status": TournamentStatus.PLANNED,
