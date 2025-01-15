@@ -28,10 +28,10 @@ class MatchBase(BaseModel):
     player2: str
     startDate: str
     endDate: str
+    tournamentId: str
 
 
 class MatchResponse(MatchBase):
     id: str
     status: Literal["Planned", "Ongoing", "Finished", "Archived", "Suspended"]
     results: MatchResults
-
