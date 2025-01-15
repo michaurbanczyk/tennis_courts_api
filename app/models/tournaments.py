@@ -40,11 +40,10 @@ class TournamentBase(BaseModel):
     title: str = Field(...)
     subtitle: Optional[str] = None
     startDate: datetime
-    endDate: datetime
     locations: List[Location]
     players: List[Player]
 
-    @field_validator("startDate", "endDate", mode="before")
+    @field_validator("startDate", mode="before")
     def validate_date_format(cls, value: str) -> datetime:
         if isinstance(value, datetime):
             return value

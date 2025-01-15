@@ -24,7 +24,7 @@ async def get_tournaments(service: TournamentService = Depends(get_service)):
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@tournaments_router.get("/{tournament_id}/", response_model=TournamentResponse)
+@tournaments_router.get("/{tournament_id}", response_model=TournamentResponse)
 async def get_tournament(tournament_id: str, service: TournamentService = Depends(get_service)):
     try:
         return await service.get_tournament(tournament_id)
