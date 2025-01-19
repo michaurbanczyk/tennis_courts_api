@@ -16,6 +16,5 @@ class WebSocketManager:
 
     async def broadcast(self, data: dict):
         print("ACTIVE CONNECTIONS", self.active_connections)
-        print("Gello")
         for connection in self.active_connections:
             await connection.send_json(data)
