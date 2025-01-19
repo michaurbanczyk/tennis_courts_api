@@ -1,4 +1,5 @@
 from typing import List
+
 from fastapi import WebSocket
 
 
@@ -14,5 +15,7 @@ class WebSocketManager:
         self.active_connections.remove(websocket)
 
     async def broadcast(self, data: dict):
+        print("ACTIVE CONNECTIONS", self.active_connections)
+
         for connection in self.active_connections:
             await connection.send_json(data)

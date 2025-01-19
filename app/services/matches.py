@@ -1,5 +1,7 @@
-from typing import Optional, List
-from app.models.matches import MatchResults, MatchBase
+import logging
+from typing import List, Optional
+
+from app.models.matches import MatchBase, MatchResults
 from app.repositories.matches import MatchRepository
 from app.websocket_manager import WebSocketManager
 
@@ -40,4 +42,5 @@ class MatchService:
         await self.repository.close()
 
     async def broadcast_update(self, message: dict):
+        logging.debug("Boradcasting")
         await self.websocket_manager.broadcast(message)
