@@ -29,7 +29,8 @@ async def websocket_endpoint(websocket: WebSocket):
     connected_clients.append(websocket)
     try:
         while True:
-            await websocket.receive_text()  # Keep connection alive
+            await websocket.receive_text()
+            print("ping")  # Keep connection alive
             await asyncio.sleep(30)
     except Exception:
         connected_clients.remove(websocket)
