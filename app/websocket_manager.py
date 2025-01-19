@@ -2,8 +2,6 @@ from typing import List
 
 from fastapi import WebSocket
 
-from app.db.config import connected_clients
-
 
 class WebSocketManager:
     def __init__(self):
@@ -17,6 +15,5 @@ class WebSocketManager:
         self.active_connections.remove(websocket)
 
     async def broadcast(self, data: dict):
-        print("ACTIVE CONNECTIONS", connected_clients)
-        for connection in connected_clients:
+        for connection in self.active_connections:
             await connection.send_json(data)

@@ -1,5 +1,3 @@
-import asyncio
-
 import uvicorn
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
@@ -31,7 +29,6 @@ async def websocket_endpoint(websocket: WebSocket):
         while True:
             await websocket.receive_text()
             print("ping")  # Keep connection alive
-            await asyncio.sleep(30)
     except Exception:
         websocket_manager.active_connections.remove(websocket)
 
