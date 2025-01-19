@@ -19,11 +19,6 @@ app.include_router(tournaments_router)
 app.include_router(matches_router)
 
 
-@app.get("/")
-async def read_root():
-    return {"message": "API is working!"}
-
-
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     """Handle WebSocket connections."""
