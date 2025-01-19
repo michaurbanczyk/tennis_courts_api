@@ -7,6 +7,7 @@ from app.routes.matches import matches_router
 from app.routes.tournaments import tournaments_router
 
 app = FastAPI()
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],  # Or ["*"] to allow all origins
