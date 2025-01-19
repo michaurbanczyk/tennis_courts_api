@@ -2,13 +2,13 @@ from typing import Optional
 
 from bson import ObjectId
 
-from app.db.config import client
+from app.db_connection import db_client
 from app.models.matches import MatchStatus
 
 
 class MatchRepository:
     def __init__(self):
-        self.db_client = client
+        self.db_client = db_client.db_client
         self.matches_collection = self.db_client["tennis"]["matches"]
 
     async def create_match(self, match: dict) -> dict:
@@ -28,8 +28,8 @@ class MatchRepository:
                 "points": {
                     "player1": "0",
                     "player2": "0",
-                }
-            }
+                },
+            },
         )
         results = await self.matches_collection.insert_one(match)
         match["id"] = str(results.inserted_id)
@@ -44,9 +44,7 @@ class MatchRepository:
 
     async def update_match(self, match_id: str, update_data: dict) -> Optional[dict]:
         return await self.matches_collection.find_one_and_update(
-            {"_id": match_id},
-            {"$set": update_data},
-            return_document=True
+            {"_id": match_id}, {"$set": update_data}, return_document=True
         )
 
     async def delete_match(self, match_id: str) -> int:
@@ -55,9 +53,7 @@ class MatchRepository:
 
     async def update_results(self, match_id: str, results_data: dict) -> Optional[dict]:
         return await self.matches_collection.find_one_and_update(
-            {"_id": ObjectId(match_id)},
-            {"$set": {"results": results_data}},
-            return_document=True
+            {"_id": ObjectId(match_id)}, {"$set": {"results": results_data}}, return_document=True
         )
 
     async def close(self):
