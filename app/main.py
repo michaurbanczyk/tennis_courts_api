@@ -4,11 +4,10 @@ import uvicorn
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.config import websocket_manager
 from app.routes.matches import matches_router
 from app.routes.tournaments import tournaments_router
-from app.websocket_manager import WebSocketManager
 
-web_socket_manager = WebSocketManager()
 app = FastAPI()
 
 app.add_middleware(
@@ -27,14 +26,14 @@ app.include_router(matches_router)
 async def websocket_endpoint(websocket: WebSocket):
     """Handle WebSocket connections."""
     await websocket.accept()
-    web_socket_manager.active_connections.append(websocket)
+    websocket_manager.active_connections.append(websocket)
     try:
         while True:
             await websocket.receive_text()
             print("ping")  # Keep connection alive
             await asyncio.sleep(30)
     except Exception:
-        web_socket_manager.active_connections.remove(websocket)
+        websocket_manager.active_connections.remove(websocket)
 
 
 if __name__ == "__main__":
