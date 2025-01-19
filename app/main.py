@@ -1,17 +1,12 @@
-from typing import List
-
 import uvicorn
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import websocket_manager
-from app.db.config import lifespan
-from app.models.matches import MatchResponse
 from app.routes.matches import matches_router
 from app.routes.tournaments import tournaments_router
 
-app = FastAPI(lifespan=lifespan)
-
+app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],  # Or ["*"] to allow all origins
@@ -22,12 +17,6 @@ app.add_middleware(
 
 app.include_router(tournaments_router)
 app.include_router(matches_router)
-
-
-@app.get("/example-endpoint", response_model=List[MatchResponse])
-async def get_matches():
-    matches = await app.mongodb["tennis"]["tournaments"].find().to_list(100)
-    return [{**m, "id": str(m["_id"])} for m in matches]
 
 
 @app.get("/")

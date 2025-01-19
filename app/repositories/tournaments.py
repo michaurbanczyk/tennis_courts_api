@@ -1,11 +1,11 @@
 from bson import ObjectId
 
-from app.db_connection import db_client
+from app.db.config import client
 
 
 class TournamentsRepository:
     def __init__(self):
-        self.db_client = db_client.db_client
+        self.db_client = client
         self.tournaments_collection = self.db_client["tennis"]["tournaments"]
 
     async def create_tournament(self, tournament: dict):
