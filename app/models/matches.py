@@ -18,9 +18,7 @@ class Result(BaseModel):
 
 
 class MatchResults(BaseModel):
-    sets: Result
     games: List[Result]
-    points: Result
 
 
 class MatchBase(BaseModel):
