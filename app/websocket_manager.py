@@ -23,6 +23,7 @@ class WebSocketManager:
 
     async def broadcast(self, data: dict):
         for connection in self.active_connections:
+            print("active_connections", self.active_connections)
             await connection.send_json(data)
 
     @staticmethod
