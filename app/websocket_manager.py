@@ -30,6 +30,5 @@ class WebSocketManager:
         while True:
             try:
                 await asyncio.sleep(HEARTBEAT_INTERVAL)
-                await websocket.send_text("heartbeat")
             except WebSocketDisconnect:
                 break
