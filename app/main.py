@@ -1,5 +1,7 @@
+import asyncio
+
 import uvicorn
-from fastapi import FastAPI, WebSocket
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import websocket_manager
@@ -25,12 +27,14 @@ async def websocket_endpoint(websocket: WebSocket):
     """Handle WebSocket connections."""
     await websocket.accept()
     websocket_manager.active_connections.append(websocket)
+    heartbeat_task = asyncio.create_task(websocket_manager.send_heartbeat(websocket))
     try:
         while True:
             await websocket.receive_text()
-            print("ping")  # Keep connection alive
-    except Exception:
+    except WebSocketDisconnect:
         websocket_manager.active_connections.remove(websocket)
+    finally:
+        heartbeat_task.cancel()
 
 
 if __name__ == "__main__":
