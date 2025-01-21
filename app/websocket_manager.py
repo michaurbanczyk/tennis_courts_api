@@ -4,7 +4,7 @@ from typing import List
 from fastapi import WebSocket, WebSocketDisconnect
 
 MAX_CONNECTIONS = 1000
-HEARTBEAT_INTERVAL = 3
+HEARTBEAT_INTERVAL = 1
 
 
 class WebSocketManager:
