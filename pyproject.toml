@@ -16,6 +16,11 @@ motor = "^3.6.0"
 websockets = "^14.1"
 asgi-lifespan = "^2.1.0"
 gunicorn = "^23.0.0"
+passlib = "^1.7.4"
+cryptography = "^44.0.0"
+openpyxl = "^3.1.5"
+python-jose = "^3.3.0"
+bcrypt = "^4.2.1"
 
 
 [tool.poetry.group.dev.dependencies]
