@@ -15,8 +15,8 @@ class UsersRepository:
         user = await self.users_collection.find_one({"_id": ObjectId(user_id)})
         return user
 
-    async def get_user_by_username(self, username: str):
-        user = await self.users_collection.find_one({"username": username})
+    async def get_user_by_email(self, email: str):
+        user = await self.users_collection.find_one({"email": email})
         return user
 
     async def get_users(self):
