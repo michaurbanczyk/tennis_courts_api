@@ -5,7 +5,6 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.models.common import Response
 from app.models.tournaments import TournamentBase, TournamentResponse
 from app.services.tournaments import TournamentService
-from app.utils.oauth import get_current_user
 
 tournaments_router = APIRouter(
     prefix="/tournaments",
@@ -18,7 +17,7 @@ def get_service():
 
 
 @tournaments_router.get("/", response_model=List[TournamentResponse])
-async def get_tournaments(service: TournamentService = Depends(get_service), _=Depends(get_current_user)):
+async def get_tournaments(service: TournamentService = Depends(get_service)):
     try:
         return await service.get_tournaments()
     except Exception as e:
