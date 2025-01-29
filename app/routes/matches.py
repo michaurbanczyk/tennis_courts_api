@@ -1,10 +1,10 @@
 from typing import List
 
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, Depends, HTTPException
 
 from app.config import websocket_manager
 from app.models.common import Response
-from app.models.matches import MatchResults, MatchResponse, MatchBase
+from app.models.matches import MatchBase, MatchResponse, MatchResults
 from app.services.matches import MatchService
 
 matches_router = APIRouter(
@@ -28,6 +28,12 @@ async def get_match(match_id: str, service: MatchService = Depends(get_service))
 @matches_router.get("/", response_model=List[MatchResponse])
 async def get_matches(service: MatchService = Depends(get_service)):
     matches = await service.get_matches()
+    return matches
+
+
+@matches_router.get("/tournament/{tournament_id}", response_model=List[MatchResponse])
+async def get_matches_by_tournament_id(tournament_id: str, service: MatchService = Depends(get_service)):
+    matches = await service.get_matches_by_tournament_id(tournament_id)
     return matches
 
 

@@ -26,6 +26,9 @@ class MatchService:
             del match["_id"]
         return match
 
+    async def get_matches_by_tournament_id(self, tournament_id: str) -> Optional[dict]:
+        return await self.repository.get_matches_by_tournament_id(tournament_id)
+
     async def delete_match(self, match_id: str) -> int:
         return await self.repository.delete_match(match_id)
 

@@ -24,9 +24,10 @@ class MatchResults(BaseModel):
 class MatchBase(BaseModel):
     player1: str
     player2: str
-    startDate: str
-    endDate: str
+    startHour: str
     tournamentId: str
+    clubName: str
+    court: str
 
 
 class MatchResponse(MatchBase):
