@@ -1,8 +1,4 @@
 import pytz
 
-from app.websocket_manager import WebSocketManager
-
-DATETIME_FORMAT = "%Y-%m-%dT%H:%M"
+DATETIME_FORMAT = "YYYY-MM-DDTHH:MM:SSZ"
 timezone = pytz.timezone("Europe/Berlin")
-
-websocket_manager = WebSocketManager()

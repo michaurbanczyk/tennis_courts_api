@@ -1,10 +1,12 @@
 from datetime import datetime
 from enum import StrEnum
-from typing import List, Literal, Optional
+from typing import Annotated, List, Literal, Optional
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, BeforeValidator, Field, field_validator
 
 from app.config import DATETIME_FORMAT
+
+PyObjectId = Annotated[str, BeforeValidator(str)]
 
 
 class TournamentStatus(StrEnum):
@@ -16,16 +18,18 @@ class TournamentStatus(StrEnum):
 
 
 class Court(BaseModel):
-    name: str
-    type: Literal["Clay", "Hard", "Grass", "Artificial Clay", "Artificial Grass", "Carpet", "Concrete", "Other"]
+    name: str = Field(...)
+    type: Literal["Clay", "Hard", "Grass", "Artificial Clay", "Artificial Grass", "Carpet", "Concrete", "Other"] = (
+        Field(...)
+    )
 
 
 class Player(BaseModel):
-    name: str
+    name: str = Field(...)
 
 
 class Location(BaseModel):
-    clubName: str
+    clubName: str = Field(...)
     courts: List[Court]
 
 
@@ -35,13 +39,17 @@ class Organizer(BaseModel):
     phoneNumber: str = Field(...)
 
 
-class TournamentBase(BaseModel):
-    organizers: List[Organizer]
+class TournamentResponse(BaseModel):
+    id: Optional[PyObjectId] = Field(default_factory=str, alias="_id")
+    status: Literal["Planned", "Ongoing", "Archived", "Suspended", "Finished"]
     title: str = Field(...)
-    subtitle: Optional[str] = None
+    subtitle: str | None = None
+    organizers: List[Organizer]
     startDate: datetime
     locations: List[Location]
     players: List[Player]
+    createdDate: datetime
+    lastUpdateDate: datetime
 
     @field_validator("startDate", mode="before")
     def validate_date_format(cls, value: str) -> datetime:
@@ -53,15 +61,20 @@ class TournamentBase(BaseModel):
             raise ValueError(f"Date format must be {DATETIME_FORMAT}, got {value}")
 
 
-class TournamentResponse(TournamentBase):
-    id: str
-    status: Literal["Planned", "Ongoing", "Archived", "Suspended", "Finished"]
-    createdDate: datetime
-    lastUpdateDate: datetime
+class TournamentCreate(BaseModel):
+    title: str = Field(...)
+    subtitle: str | None = None
+    organizers: List[Organizer]
+    startDate: datetime
+    locations: List[Location]
+    players: List[Player]
 
 
 class TournamentUpdate(BaseModel):
-    name: Optional[str] = None
-    startDate: Optional[str] = None
-    endDate: Optional[str] = None
-    courts: Optional[List[Court]] = None
+    title: str | None = None
+    status: Literal["Planned", "Ongoing", "Archived", "Suspended", "Finished"] | None = None
+    subtitle: str | None = None
+    organizers: List[Organizer] | None = None
+    startDate: datetime | None = None
+    locations: List[Location] | None = None
+    players: List[Player] | None = None

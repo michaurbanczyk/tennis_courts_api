@@ -10,6 +10,3 @@ uri = "mongodb+srv://" + username + ":" + password + "@" + cluster
 
 client = AsyncIOMotorClient(uri)
 db = client["tennis"]
-matches_collection = db["matches"]
-
-connected_clients = []
