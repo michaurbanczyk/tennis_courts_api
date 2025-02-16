@@ -1,12 +1,11 @@
 from datetime import datetime
 from enum import StrEnum
-from typing import Annotated, List, Literal, Optional
+from typing import List, Literal, Optional
 
-from pydantic import BaseModel, BeforeValidator, Field, field_validator
+from pydantic import BaseModel, Field, field_validator
 
 from app.config import DATETIME_FORMAT
-
-PyObjectId = Annotated[str, BeforeValidator(str)]
+from app.models.common import PyObjectId
 
 
 class TournamentStatus(StrEnum):

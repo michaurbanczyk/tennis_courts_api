@@ -4,7 +4,7 @@ from typing import List, Literal, Optional
 
 from pydantic import BaseModel, Field
 
-from app.models.tournaments import PyObjectId
+from app.models.common import PyObjectId
 
 
 class MatchStatus(StrEnum):
@@ -51,3 +51,13 @@ class MatchCreate(BaseModel):
     )
     createdDate: datetime = Field(default_factory=lambda: datetime.now(timezone.utc).replace(tzinfo=None))
     lastUpdateDate: datetime = Field(default_factory=lambda: datetime.now(timezone.utc).replace(tzinfo=None))
+
+
+class MatchUpdate(BaseModel):
+    player1: str | None = None
+    player2: str | None = None
+    startHour: str | None = None
+    tournamentId: str | None = None
+    clubName: str | None = None
+    court: str | None = None
+    status: Literal["Planned", "Ongoing", "Finished", "Archived", "Suspended"] | None = None

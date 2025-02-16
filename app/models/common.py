@@ -1,4 +1,8 @@
-from pydantic import BaseModel
+from typing import Annotated
+
+from pydantic import BaseModel, BeforeValidator
+
+PyObjectId = Annotated[str, BeforeValidator(str)]
 
 
 class Response(BaseModel):
