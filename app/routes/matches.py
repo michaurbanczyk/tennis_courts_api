@@ -6,7 +6,12 @@ from fastapi import APIRouter, HTTPException
 
 from app.db.config import db
 from app.models.common import Response
-from app.models.matches import MatchCreate, MatchResponse, MatchUpdate
+from app.models.matches import (
+    MatchCreate,
+    MatchResponse,
+    MatchResultUpdate,
+    MatchUpdate,
+)
 
 matches_router = APIRouter(
     prefix="/matches",
@@ -57,7 +62,7 @@ async def delete_match(match_id: str):
 
 
 @matches_router.patch("/{match_id}", response_model=MatchResponse)
-async def update_tournament(
+async def update_match(
     match_id: str,
     body: MatchUpdate,
 ):
@@ -67,6 +72,23 @@ async def update_tournament(
         raise HTTPException(status_code=404, detail=f"Match with id {match_id} not found")
 
     match_update = {**body, "lastUpdateDate": datetime.now(timezone.utc).replace(tzinfo=None)}
+    result = await db["matches"].find_one_and_update(
+        {"_id": ObjectId(match_id)}, {"$set": match_update}, return_document=True
+    )
+    return result
+
+
+@matches_router.patch("/{match_id}/results", response_model=MatchResponse)
+async def update_match_results(
+    match_id: str,
+    body: MatchResultUpdate,
+):
+    body = body.model_dump(exclude_unset=True)
+    match = await db["matches"].find_one({"_id": ObjectId(match_id)})
+    if not match:
+        raise HTTPException(status_code=404, detail=f"Match with id {match_id} not found")
+
+    match_update = {"results": body, "lastUpdateDate": datetime.now(timezone.utc).replace(tzinfo=None)}
     result = await db["matches"].find_one_and_update(
         {"_id": ObjectId(match_id)}, {"$set": match_update}, return_document=True
     )

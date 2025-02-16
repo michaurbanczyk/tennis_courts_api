@@ -38,12 +38,19 @@ class Organizer(BaseModel):
     phoneNumber: str = Field(...)
 
 
+class Rules(BaseModel):
+    maxNumberOfSets: int
+    isLastSetSuperTiebreak: bool
+    numberOfGamesInSet: int
+
+
 class TournamentResponse(BaseModel):
     id: Optional[PyObjectId] = Field(default_factory=str, alias="_id")
     status: Literal["Planned", "Ongoing", "Archived", "Suspended", "Finished"]
     title: str = Field(...)
     subtitle: str | None = None
     organizers: List[Organizer]
+    rules: Rules
     startDate: datetime
     locations: List[Location]
     players: List[Player]
@@ -67,6 +74,7 @@ class TournamentCreate(BaseModel):
     startDate: datetime
     locations: List[Location]
     players: List[Player]
+    rules: Rules
 
 
 class TournamentUpdate(BaseModel):
@@ -77,3 +85,4 @@ class TournamentUpdate(BaseModel):
     startDate: datetime | None = None
     locations: List[Location] | None = None
     players: List[Player] | None = None
+    rules: Rules | None = None

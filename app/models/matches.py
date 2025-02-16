@@ -21,6 +21,8 @@ class Result(BaseModel):
 
 
 class MatchResults(BaseModel):
+    firstServe: str
+    duration: str
     games: List[Result]
 
 
@@ -45,7 +47,9 @@ class MatchCreate(BaseModel):
     tournamentId: str = Field(...)
     clubName: str = Field(...)
     court: str = Field(...)
-    results: MatchResults = Field(default_factory=lambda: MatchResults(games=[{"player1": "0", "player2": "0"}]))
+    results: MatchResults = Field(
+        default_factory=lambda: MatchResults(firstServe="", duration="0", games=[{"player1": "0", "player2": "0"}])
+    )
     status: Literal["Planned", "Ongoing", "Finished", "Archived", "Suspended"] = Field(
         default_factory=lambda: "Planned"
     )
@@ -61,3 +65,9 @@ class MatchUpdate(BaseModel):
     clubName: str | None = None
     court: str | None = None
     status: Literal["Planned", "Ongoing", "Finished", "Archived", "Suspended"] | None = None
+
+
+class MatchResultUpdate(BaseModel):
+    firstServe: str | None = None
+    duration: str | None = None
+    games: List[Result] | None = None
