@@ -35,7 +35,7 @@ async def get_tournaments(
     tournaments = await db["tournaments"].find(query).to_list(100)
     if tournaments:
         return tournaments
-    raise HTTPException(status_code=404, detail="No tournaments")
+    return []
 
 
 @tournaments_router.get("/{tournament_id}", response_model=TournamentResponse)
