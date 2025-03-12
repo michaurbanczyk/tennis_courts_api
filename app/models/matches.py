@@ -63,6 +63,7 @@ class MatchUpdate(BaseModel):
     startHour: str | None = None
     tournamentId: str | None = None
     clubName: str | None = None
+    results: MatchResults | None = None
     court: str | None = None
     status: Literal["Planned", "Ongoing", "Finished", "Archived", "Suspended"] | None = None
 

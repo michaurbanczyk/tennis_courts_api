@@ -3,7 +3,7 @@ from jose import JWTError, jwt
 
 from app.db.config import db
 from app.models.common import Response
-from app.models.users import CreateUser, Login, Token
+from app.models.users import CreateUser, Login, UserBase, UserToken
 from app.utils.hash import bcrypt, verify
 from app.utils.oauth import oauth2_scheme
 from app.utils.token import ALGORITHM, SECRET_KEY, create_access_token
@@ -27,7 +27,7 @@ async def register(body: CreateUser):
     return {"message": "User created successfully"}
 
 
-@users_router.post("/login", response_model=Token)
+@users_router.post("/login", response_model=UserToken)
 async def login(user_login: Login):
     user_body = user_login.model_dump()
     user = await db["users"].find_one({"email": user_body["email"]})
@@ -36,12 +36,11 @@ async def login(user_login: Login):
     if not verify(user["password"], user_login.password):
         raise HTTPException(status_code=401, detail="Wrong password or username")
     access_token = create_access_token(data={"sub": user["email"]})
-    return {"accessToken": access_token, "tokenType": "bearer"}
+    return {**user, "accessToken": access_token, "tokenType": "bearer"}
 
 
 async def get_current_user(token: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(status_code=401, detail="Invalid or expired token")
-
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         user_email: str = payload.get("sub")
@@ -54,9 +53,10 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     if not user:
         raise credentials_exception
 
-    return {"user_email": user_email}
+    return user
 
 
-@users_router.get("/me")
+@users_router.get("/me", response_model=UserBase)
 async def read_users_me(current_user: dict = Depends(get_current_user)):
-    return {"username": current_user["user_email"]}
+    del current_user["password"]
+    return current_user

@@ -31,5 +31,5 @@ class Token(BaseModel):
     tokenType: str
 
 
-class TokenData(BaseModel):
-    username: Optional[str] = None
+class UserToken(UserBase, Token):
+    pass

@@ -1,8 +1,8 @@
 from datetime import datetime, timezone
-from typing import List
+from typing import List, Optional
 
 from bson import ObjectId
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 
 from app.db.config import db
 from app.models.common import Response
@@ -13,6 +13,7 @@ from app.models.tournaments import (
     TournamentStatus,
     TournamentUpdate,
 )
+from app.routes.users import get_current_user
 
 tournaments_router = APIRouter(
     prefix="/tournaments",
@@ -21,8 +22,17 @@ tournaments_router = APIRouter(
 
 
 @tournaments_router.get("/", response_model=List[TournamentResponse])
-async def get_tournaments():
-    tournaments = await db["tournaments"].find().to_list(100)
+async def get_tournaments(
+    created_by: Optional[str] = Query(None, alias="createdBy", description="Filter by created_by"),
+    is_private: Optional[bool] = Query(None, alias="isPrivate", description="Filter by is_private"),
+):
+    query = {}
+    if created_by:
+        query["createdBy"] = created_by
+    if is_private is not None:
+        query["isPrivate"] = is_private
+
+    tournaments = await db["tournaments"].find(query).to_list(100)
     if tournaments:
         return tournaments
     raise HTTPException(status_code=404, detail="No tournaments")
@@ -37,7 +47,7 @@ async def get_tournament(tournament_id: str):
 
 
 @tournaments_router.post("/", status_code=201, response_model=Response)
-async def create_tournament(tournament: TournamentCreate):
+async def create_tournament(tournament: TournamentCreate, current_user: dict = Depends(get_current_user)):
     tournament_model_dump = tournament.model_dump()
     current_time = datetime.now(timezone.utc).replace(tzinfo=None)
     tournament_to_create = {
@@ -45,6 +55,7 @@ async def create_tournament(tournament: TournamentCreate):
         "status": TournamentStatus.PLANNED,
         "createdDate": current_time,
         "lastUpdateDate": current_time,
+        "createdBy": current_user["id_"],
     }
     created_tournament = await db["tournaments"].insert_one(tournament_to_create)
     if not created_tournament:
