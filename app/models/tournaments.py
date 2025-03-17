@@ -56,7 +56,7 @@ class TournamentResponse(BaseModel):
     startDate: datetime
     locations: List[Location]
     players: List[Player]
-    createdBy: str
+    createdBy: PyObjectId = Field(default_factory=str, alias="createdBy")
     createdDate: datetime
     lastUpdateDate: datetime
 
@@ -93,3 +93,7 @@ class TournamentUpdate(BaseModel):
     locations: List[Location] | None = None
     players: List[Player] | None = None
     rules: Rules | None = None
+
+
+class TournamentPassword(BaseModel):
+    password: str

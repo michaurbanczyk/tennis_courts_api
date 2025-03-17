@@ -9,6 +9,7 @@ from app.models.common import Response
 from app.models.matches import MatchResponse
 from app.models.tournaments import (
     TournamentCreate,
+    TournamentPassword,
     TournamentResponse,
     TournamentStatus,
     TournamentUpdate,
@@ -28,7 +29,7 @@ async def get_tournaments(
 ):
     query = {}
     if created_by:
-        query["createdBy"] = created_by
+        query["createdBy"] = ObjectId(created_by)
     if is_private is not None:
         query["isPrivate"] = is_private
 
@@ -55,7 +56,7 @@ async def create_tournament(tournament: TournamentCreate, current_user: dict = D
         "status": TournamentStatus.PLANNED,
         "createdDate": current_time,
         "lastUpdateDate": current_time,
-        "createdBy": current_user["id_"],
+        "createdBy": current_user["_id"],
     }
     created_tournament = await db["tournaments"].insert_one(tournament_to_create)
     if not created_tournament:
@@ -94,3 +95,15 @@ async def get_tournaments_matches(tournament_id: str):
     if not tournament_matches:
         return []
     return tournament_matches
+
+
+@tournaments_router.post("/{tournament_id}/verify-password", response_model=Response)
+async def verify_password(tournament_id: str, body: TournamentPassword):
+    tournament = await db["tournaments"].find_one({"_id": ObjectId(tournament_id)})
+    if tournament:
+        body = body.model_dump()
+        if tournament["password"] == body["password"]:
+            return {"message": "Password correct"}
+        else:
+            raise HTTPException(status_code=401, detail="Password not correct")
+    raise HTTPException(status_code=404, detail=f"Tournament with {tournament_id} not found")
