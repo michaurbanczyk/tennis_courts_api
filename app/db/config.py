@@ -10,9 +10,9 @@ cluster = os.environ.get("MONGO_DB_CLUSTER")
 uri = "mongodb+srv://" + username + ":" + password + "@" + cluster
 client = AsyncIOMotorClient(uri)
 
-IS_PROD = os.environ.get("IS_PROD", False)
+IS_PROD = os.environ.get("IS_PROD", "False")
 
-if IS_PROD:
+if IS_PROD == "True":
     db = client["tennis"]
 else:
     db = client["dev"]["tennis"]
