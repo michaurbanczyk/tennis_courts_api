@@ -22,7 +22,7 @@ tournaments_router = APIRouter(
 )
 
 
-@tournaments_router.get("/", response_model=List[TournamentResponse])
+@tournaments_router.get("", response_model=List[TournamentResponse])
 async def get_tournaments(
     created_by: Optional[str] = Query(None, alias="createdBy", description="Filter by created_by"),
     is_private: Optional[bool] = Query(None, alias="isPrivate", description="Filter by is_private"),
@@ -47,7 +47,7 @@ async def get_tournament(tournament_id: str):
     raise HTTPException(status_code=404, detail=f"Tournament with {tournament_id} not found")
 
 
-@tournaments_router.post("/", status_code=201, response_model=Response)
+@tournaments_router.post("", status_code=201, response_model=Response)
 async def create_tournament(tournament: TournamentCreate, current_user: dict = Depends(get_current_user)):
     tournament_model_dump = tournament.model_dump()
     current_time = datetime.now(timezone.utc).replace(tzinfo=None)

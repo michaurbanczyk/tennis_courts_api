@@ -19,7 +19,7 @@ matches_router = APIRouter(
 )
 
 
-@matches_router.get("/", response_model=List[MatchResponse])
+@matches_router.get("", response_model=List[MatchResponse])
 async def get_matches():
     matches = await db["matches"].find().to_list(100)
     if matches:
@@ -35,7 +35,7 @@ async def get_match(match_id: str):
     raise HTTPException(status_code=404, detail=f"Match with {match_id} not found")
 
 
-@matches_router.post("/", response_model=Response)
+@matches_router.post("", response_model=Response)
 async def create_match(body: MatchCreate):
     match = body.model_dump()
 
