@@ -12,6 +12,7 @@ from app.models.matches import (
     MatchResultUpdate,
     MatchUpdate,
 )
+from app.routes.websocket import connection_manager
 
 matches_router = APIRouter(
     prefix="/matches",
@@ -75,6 +76,9 @@ async def update_match(
     result = await db["matches"].find_one_and_update(
         {"_id": ObjectId(match_id)}, {"$set": match_update}, return_document=True
     )
+
+    await connection_manager.broadcast(MatchResponse.model_validate(result).model_dump(mode="json"))
+
     return result
 
 
