@@ -16,7 +16,7 @@ class ConnectionManager:
     async def connect(self, websocket: WebSocket):
         await websocket.accept()
         self.active_connections.append(websocket)
-        logging.info(f"Active connections: {self.active_connections}")
+        logging.error(f"Active connections: {self.active_connections}")
 
     def disconnect(self, websocket: WebSocket):
         self.active_connections.remove(websocket)
@@ -24,7 +24,7 @@ class ConnectionManager:
     async def broadcast(self, message: str):
         message["_id"] = message["id"]
         del message["id"]
-        logging.info("Broadcasting 2")
+        logging.error("Broadcasting 2")
         for connection in self.active_connections:
             await connection.send_json(message)
 
