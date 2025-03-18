@@ -24,7 +24,6 @@ class ConnectionManager:
     async def broadcast(self, message: str):
         message["_id"] = message["id"]
         del message["id"]
-        logging.error("Broadcasting 2")
         for connection in self.active_connections:
             await connection.send_json(message)
 
