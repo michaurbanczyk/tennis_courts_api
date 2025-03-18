@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime, timezone
 from typing import List
 
@@ -77,6 +78,7 @@ async def update_match(
         {"_id": ObjectId(match_id)}, {"$set": match_update}, return_document=True
     )
 
+    logging.info("Broadcasting 1")
     await connection_manager.broadcast(MatchResponse.model_validate(result).model_dump(mode="json"))
 
     return result
