@@ -7,6 +7,7 @@ from starlette.responses import JSONResponse
 from app.routes.matches import matches_router
 from app.routes.tournaments import tournaments_router
 from app.routes.users import users_router
+from app.routes.websocket import ws_router
 
 app = FastAPI()
 
@@ -21,6 +22,8 @@ app.add_middleware(
 app.include_router(tournaments_router)
 app.include_router(matches_router)
 app.include_router(users_router)
+
+app.include_router(ws_router)
 
 
 @app.exception_handler(RequestValidationError)
