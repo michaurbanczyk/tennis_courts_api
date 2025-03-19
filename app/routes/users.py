@@ -34,7 +34,7 @@ async def login(user_login: Login):
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     if not verify(user["password"], user_login.password):
-        raise HTTPException(status_code=401, detail="Wrong password or username")
+        raise HTTPException(status_code=401, detail="Wrong password")
     access_token = create_access_token(data={"sub": user["email"]})
     return {**user, "accessToken": access_token, "tokenType": "bearer"}
 
