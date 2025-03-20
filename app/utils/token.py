@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta
 
+import jwt
 from fastapi import HTTPException
-from jose import JWTError, jwt
+from jwt import InvalidTokenError
 
 from app.config import timezone
 
@@ -36,7 +37,7 @@ def verify_token(token: str):
                 detail="Wrong authentication token",
                 headers={"WWW-Authenticate": "Bearer"},
             )
-    except JWTError:
+    except InvalidTokenError:
         raise HTTPException(
             status_code=401,
             detail="Cannot authenticate",

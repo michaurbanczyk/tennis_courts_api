@@ -1,5 +1,6 @@
+import jwt
 from fastapi import APIRouter, Depends, HTTPException
-from jose import JWTError, jwt
+from jwt import InvalidTokenError
 
 from app.db.config import db
 from app.models.common import Response
@@ -46,7 +47,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         user_email: str = payload.get("sub")
         if user_email is None:
             raise credentials_exception
-    except JWTError:
+    except InvalidTokenError:
         raise credentials_exception
 
     user = await db["users"].find_one({"email": user_email})

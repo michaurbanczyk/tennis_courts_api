@@ -10,7 +10,7 @@ class UserBase(BaseModel):
     firstName: str
     lastName: str
     email: str
-    phoneNumber: str
+    phoneNumber: Optional[str] = None
 
 
 class CreateUser(UserBase):
