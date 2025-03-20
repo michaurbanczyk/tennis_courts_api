@@ -15,6 +15,7 @@ from app.models.tournaments import (
     TournamentUpdate,
 )
 from app.routes.users import get_current_user
+from app.utils.hash import bcrypt, verify
 
 tournaments_router = APIRouter(
     prefix="/tournaments",
@@ -53,6 +54,7 @@ async def create_tournament(tournament: TournamentCreate, current_user: dict = D
     current_time = datetime.now(timezone.utc).replace(tzinfo=None)
     tournament_to_create = {
         **tournament_model_dump,
+        "password": bcrypt(tournament_model_dump["password"]),
         "status": TournamentStatus.PLANNED,
         "createdDate": current_time,
         "lastUpdateDate": current_time,
@@ -102,7 +104,7 @@ async def verify_password(tournament_id: str, body: TournamentPassword):
     tournament = await db["tournaments"].find_one({"_id": ObjectId(tournament_id)})
     if tournament:
         body = body.model_dump()
-        if tournament["password"] == body["password"]:
+        if verify(tournament["password"], body["password"]):
             return {"message": "Password correct"}
         else:
             raise HTTPException(status_code=401, detail="Password not correct")

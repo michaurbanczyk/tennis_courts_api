@@ -50,7 +50,6 @@ class TournamentResponse(BaseModel):
     title: str = Field(...)
     subtitle: str | None = None
     isPrivate: bool
-    password: str
     organizers: List[Organizer]
     rules: Rules
     startDate: datetime
