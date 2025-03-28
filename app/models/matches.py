@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 from enum import StrEnum
 from typing import List, Literal, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from app.models.common import PyObjectId
 
@@ -25,12 +25,23 @@ class MatchResults(BaseModel):
     duration: str
     games: List[Result]
 
+    @field_validator("duration", mode="before")
+    def validate_duration(cls, value: int) -> str:
+        if isinstance(value, int):
+            hours, remainder = divmod(value, 3600)
+            minutes = remainder // 60
+            return f"{hours:01}h {minutes:02}min"
+        else:
+            return ""
+
 
 class MatchResponse(BaseModel):
     id: Optional[PyObjectId] = Field(default_factory=str, alias="_id")
     player1: str = Field(...)
     player2: str = Field(...)
-    startHour: str = Field(...)
+    plannedStartHour: str = Field(...)
+    startHour: datetime | None = None
+    endHour: datetime | None = None
     tournamentId: str = Field(...)
     clubName: str = Field(...)
     court: str = Field(...)
@@ -43,7 +54,7 @@ class MatchResponse(BaseModel):
 class MatchCreate(BaseModel):
     player1: str = Field(...)
     player2: str = Field(...)
-    startHour: str = Field(...)
+    plannedStartHour: str = Field(...)
     tournamentId: str = Field(...)
     clubName: str = Field(...)
     court: str = Field(...)
@@ -60,7 +71,7 @@ class MatchCreate(BaseModel):
 class MatchUpdate(BaseModel):
     player1: str | None = None
     player2: str | None = None
-    startHour: str | None = None
+    plannedStartHour: str | None = None
     tournamentId: str | None = None
     clubName: str | None = None
     results: MatchResults | None = None

@@ -10,6 +10,7 @@ from app.models.matches import (
     MatchCreate,
     MatchResponse,
     MatchResultUpdate,
+    MatchStatus,
     MatchUpdate,
 )
 from app.routes.websocket import connection_manager
@@ -71,6 +72,14 @@ async def update_match(
     match = await db["matches"].find_one({"_id": ObjectId(match_id)})
     if not match:
         raise HTTPException(status_code=404, detail=f"Match with id {match_id} not found")
+
+    if match["status"] != MatchStatus.ONGOING and body["status"] == MatchStatus.ONGOING:
+        body["startHour"] = datetime.now(timezone.utc).replace(tzinfo=None)
+        body["endHour"] = None
+    elif body["status"] == MatchStatus.FINISHED:
+        end_hour = datetime.now(timezone.utc).replace(tzinfo=None)
+        body["endHour"] = datetime.now(timezone.utc).replace(tzinfo=None)
+        body["results"]["duration"] = (end_hour - match["startHour"]).seconds
 
     match_update = {**body, "lastUpdateDate": datetime.now(timezone.utc).replace(tzinfo=None)}
     result = await db["matches"].find_one_and_update(
