@@ -25,6 +25,7 @@ class Court(BaseModel):
 
 class Player(BaseModel):
     name: str = Field(...)
+    email: str = Field(default="")
 
 
 class Location(BaseModel):
