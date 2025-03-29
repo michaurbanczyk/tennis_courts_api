@@ -40,8 +40,11 @@ class MatchResponse(BaseModel):
     player1: str = Field(...)
     player2: str = Field(...)
     plannedStartHour: str = Field(...)
+    title: str | None = None
+    subtitle: str | None = None
     startHour: datetime | None = None
     endHour: datetime | None = None
+    transmissionLink: str | None = None
     tournamentId: str = Field(...)
     clubName: str = Field(...)
     court: str = Field(...)
@@ -56,6 +59,9 @@ class MatchCreate(BaseModel):
     player2: str = Field(...)
     plannedStartHour: str = Field(...)
     tournamentId: str = Field(...)
+    title: str | None = None
+    subtitle: str | None = None
+    transmissionLink: str | None = None
     clubName: str = Field(...)
     court: str = Field(...)
     results: MatchResults = Field(
@@ -72,7 +78,9 @@ class MatchUpdate(BaseModel):
     player1: str | None = None
     player2: str | None = None
     plannedStartHour: str | None = None
-    tournamentId: str | None = None
+    title: str | None = None
+    subtitle: str | None = None
+    transmissionLink: str | None = None
     clubName: str | None = None
     results: MatchResults | None = None
     court: str | None = None
