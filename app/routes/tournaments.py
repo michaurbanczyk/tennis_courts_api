@@ -72,6 +72,8 @@ async def delete_tournament(tournament_id: str):
     result = await db["tournaments"].delete_one({"_id": ObjectId(tournament_id)})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail=f"Tournament with id {tournament_id} not found")
+    else:
+        await db["matches"].delete_many({"tournamentId": tournament_id})
     return {"message": f"Tournament with id {tournament_id} deleted successfully"}
 
 
