@@ -100,8 +100,20 @@ async def update_tournament(
 
 
 @tournaments_router.get("/{tournament_id}/matches", response_model=List[MatchResponse])
-async def get_tournaments_matches(tournament_id: str):
-    tournament_matches = await db["matches"].find({"tournamentId": tournament_id}).to_list(1000)
+async def get_tournaments_matches(
+    tournament_id: str,
+    player: Optional[str] = Query(None, alias="player", description="player name"),
+):
+    query = {}
+    if player:
+        query = {
+            "$or": [
+                {"player1": {"$options": "i", "$regex": f".*{player}.*"}},
+                {"player2": {"$options": "i", "$regex": f".*{player}.*"}},
+            ]
+        }
+
+    tournament_matches = await db["matches"].find({**query, "tournamentId": tournament_id}).to_list(1000)
     if not tournament_matches:
         return []
     return tournament_matches
