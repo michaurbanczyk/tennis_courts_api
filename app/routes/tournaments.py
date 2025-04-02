@@ -8,6 +8,7 @@ from app.db.config import db
 from app.models.common import Response
 from app.models.matches import MatchResponse
 from app.models.tournaments import (
+    PaginatedTournamentResponse,
     TournamentCreate,
     TournamentPassword,
     TournamentResponse,
@@ -23,21 +24,26 @@ tournaments_router = APIRouter(
 )
 
 
-@tournaments_router.get("", response_model=List[TournamentResponse])
+@tournaments_router.get("", response_model=PaginatedTournamentResponse)
 async def get_tournaments(
     created_by: Optional[str] = Query(None, alias="createdBy", description="Filter by created_by"),
     is_private: Optional[bool] = Query(None, alias="isPrivate", description="Filter by is_private"),
+    tournament_name: Optional[str] = Query(None, alias="tournamentName", description="tournamentName"),
+    limit: int = Query(10, ge=1, le=100, description="Number of tournaments to retrieve (max 100)"),
+    offset: int = Query(0, ge=0, description="Number of tournaments to offset"),
 ):
     query = {}
     if created_by:
         query["createdBy"] = ObjectId(created_by)
     if is_private is not None:
         query["isPrivate"] = is_private
+    if tournament_name:
+        query["title"] = {"$regex": f".*{tournament_name}.*", "$options": "i"}
 
-    tournaments = await db["tournaments"].find(query).to_list(100)
-    if tournaments:
-        return tournaments
-    return []
+    total_count = await db["tournaments"].count_documents(query)
+    tournaments = await db["tournaments"].find(query).skip(offset).limit(limit).to_list(limit)
+
+    return {"tournaments": tournaments if tournaments else [], "limit": limit, "offset": offset, "total": total_count}
 
 
 @tournaments_router.get("/{tournament_id}", response_model=TournamentResponse)

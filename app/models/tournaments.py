@@ -70,6 +70,11 @@ class TournamentResponse(BaseModel):
             raise ValueError(f"Date format must be {DATETIME_FORMAT}, got {value}")
 
 
+class PaginatedTournamentResponse(BaseModel):
+    tournaments: List[TournamentResponse]
+    total: int
+
+
 class TournamentCreate(BaseModel):
     title: str = Field(...)
     subtitle: str | None = None
