@@ -33,26 +33,12 @@ class Location(BaseModel):
     courts: List[Court]
 
 
-class Organizer(BaseModel):
-    name: str = Field(...)
-    email: str = Field(...)
-    phoneNumber: str = Field(...)
-
-
-class Rules(BaseModel):
-    maxNumberOfSets: int
-    isLastSetSuperTiebreak: bool
-    numberOfGamesInSet: int
-
-
 class TournamentResponse(BaseModel):
     id: Optional[PyObjectId] = Field(default_factory=str, alias="_id")
-    status: Literal["Planned", "Ongoing", "Archived", "Suspended", "Finished"]
+    status: Literal["Planned", "Ongoing", "Finished"]
     title: str = Field(...)
     subtitle: str | None = None
     isPrivate: bool
-    organizers: List[Organizer]
-    rules: Rules
     startDate: datetime
     locations: List[Location]
     players: List[Player]
@@ -80,24 +66,20 @@ class TournamentCreate(BaseModel):
     subtitle: str | None = None
     isPrivate: bool = False
     password: str = Field(..., min_length=5)
-    organizers: List[Organizer]
     startDate: datetime
     locations: List[Location]
     players: List[Player]
-    rules: Rules
 
 
 class TournamentUpdate(BaseModel):
     title: str | None = None
-    status: Literal["Planned", "Ongoing", "Archived", "Suspended", "Finished"] | None = None
+    status: Literal["Planned", "Ongoing", "Finished"] | None = None
     subtitle: str | None = None
     password: str | None = None
-    organizers: List[Organizer] | None = None
     startDate: datetime | None = None
     isPrivate: bool | None = None
     locations: List[Location] | None = None
     players: List[Player] | None = None
-    rules: Rules | None = None
 
 
 class TournamentPassword(BaseModel):

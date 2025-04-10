@@ -11,8 +11,6 @@ class MatchStatus(StrEnum):
     PLANNED = "Planned"
     ONGOING = "Ongoing"
     FINISHED = "Finished"
-    ARCHIVED = "Archived"
-    SUSPENDED = "Suspended"
 
 
 class Result(BaseModel):
@@ -48,7 +46,7 @@ class MatchResponse(BaseModel):
     tournamentId: str = Field(...)
     clubName: str = Field(...)
     court: str = Field(...)
-    status: Literal["Planned", "Ongoing", "Finished", "Archived", "Suspended"]
+    status: Literal["Planned", "Ongoing", "Finished"]
     results: MatchResults
     createdDate: datetime
     lastUpdateDate: datetime
@@ -67,9 +65,7 @@ class MatchCreate(BaseModel):
     results: MatchResults = Field(
         default_factory=lambda: MatchResults(firstServe="", duration="0", games=[{"player1": "0", "player2": "0"}])
     )
-    status: Literal["Planned", "Ongoing", "Finished", "Archived", "Suspended"] = Field(
-        default_factory=lambda: "Planned"
-    )
+    status: Literal["Planned", "Ongoing", "Finished"] = Field(default_factory=lambda: "Planned")
     createdDate: datetime = Field(default_factory=lambda: datetime.now(timezone.utc).replace(tzinfo=None))
     lastUpdateDate: datetime = Field(default_factory=lambda: datetime.now(timezone.utc).replace(tzinfo=None))
 
@@ -84,7 +80,7 @@ class MatchUpdate(BaseModel):
     clubName: str | None = None
     results: MatchResults | None = None
     court: str | None = None
-    status: Literal["Planned", "Ongoing", "Finished", "Archived", "Suspended"] | None = None
+    status: Literal["Planned", "Ongoing", "Finished"] | None = None
 
 
 class MatchResultUpdate(BaseModel):
