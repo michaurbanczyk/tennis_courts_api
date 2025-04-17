@@ -27,7 +27,6 @@ tournaments_router = APIRouter(
 @tournaments_router.get("", response_model=PaginatedTournamentResponse)
 async def get_tournaments(
     created_by: Optional[str] = Query(None, alias="createdBy", description="Filter by created_by"),
-    is_private: Optional[bool] = Query(None, alias="isPrivate", description="Filter by is_private"),
     tournament_name: Optional[str] = Query(None, alias="tournamentName", description="tournamentName"),
     limit: int = Query(10, ge=1, le=100, description="Number of tournaments to retrieve (max 100)"),
     offset: int = Query(0, ge=0, description="Number of tournaments to offset"),
@@ -35,8 +34,6 @@ async def get_tournaments(
     query = {}
     if created_by:
         query["createdBy"] = ObjectId(created_by)
-    if is_private is not None:
-        query["isPrivate"] = is_private
     if tournament_name:
         query["title"] = {"$regex": f".*{tournament_name}.*", "$options": "i"}
 

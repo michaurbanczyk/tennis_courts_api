@@ -38,7 +38,6 @@ class TournamentResponse(BaseModel):
     status: Literal["Planned", "Ongoing", "Finished"]
     title: str = Field(...)
     subtitle: str | None = None
-    isPrivate: bool
     startDate: datetime
     locations: List[Location]
     players: List[Player]
@@ -64,7 +63,6 @@ class PaginatedTournamentResponse(BaseModel):
 class TournamentCreate(BaseModel):
     title: str = Field(...)
     subtitle: str | None = None
-    isPrivate: bool = False
     password: str = Field(..., min_length=5)
     startDate: datetime
     locations: List[Location]
@@ -77,7 +75,6 @@ class TournamentUpdate(BaseModel):
     subtitle: str | None = None
     password: str | None = None
     startDate: datetime | None = None
-    isPrivate: bool | None = None
     locations: List[Location] | None = None
     players: List[Player] | None = None
 
