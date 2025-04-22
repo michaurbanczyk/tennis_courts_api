@@ -38,7 +38,7 @@ async def get_tournaments(
         query["title"] = {"$regex": f".*{tournament_name}.*", "$options": "i"}
 
     total_count = await db["tournaments"].count_documents(query)
-    tournaments = await db["tournaments"].find(query).skip(offset).limit(limit).to_list(limit)
+    tournaments = await db["tournaments"].find(query).sort("startDate", -1).skip(offset).limit(limit).to_list(limit)
 
     return {"tournaments": tournaments if tournaments else [], "limit": limit, "offset": offset, "total": total_count}
 
