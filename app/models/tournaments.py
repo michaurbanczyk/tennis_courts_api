@@ -4,7 +4,7 @@ from typing import List, Literal, Optional
 
 from pydantic import BaseModel, Field, field_validator
 
-from app.config import DATETIME_FORMAT
+from app.config import DATETIME_FORMAT, app_timezone
 from app.models.common import PyObjectId
 
 
@@ -67,6 +67,12 @@ class TournamentCreate(BaseModel):
     startDate: datetime
     locations: List[Location]
     players: List[Player]
+    createdDate: datetime = Field(
+        default_factory=lambda: datetime.now(app_timezone).replace(microsecond=0, tzinfo=None)
+    )
+    lastUpdateDate: datetime = Field(
+        default_factory=lambda: datetime.now(app_timezone).replace(microsecond=0, tzinfo=None)
+    )
 
 
 class TournamentUpdate(BaseModel):

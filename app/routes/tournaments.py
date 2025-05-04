@@ -55,13 +55,10 @@ async def get_tournament(tournament_id: str):
 @tournaments_router.post("", status_code=201, response_model=Response)
 async def create_tournament(tournament: TournamentCreate, current_user: dict = Depends(get_current_user)):
     tournament_model_dump = tournament.model_dump()
-    current_time = datetime.now(app_timezone).replace(microsecond=0, tzinfo=None)
     tournament_to_create = {
         **tournament_model_dump,
         "password": bcrypt(tournament_model_dump["password"]),
         "status": TournamentStatus.PLANNED,
-        "createdDate": current_time,
-        "lastUpdateDate": current_time,
         "createdBy": current_user["_id"],
     }
     created_tournament = await db["tournaments"].insert_one(tournament_to_create)
