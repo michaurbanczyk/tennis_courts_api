@@ -1,9 +1,10 @@
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import List, Optional
 
 from bson import ObjectId
 from fastapi import APIRouter, Depends, HTTPException, Query
 
+from app.config import app_timezone
 from app.db.config import db
 from app.models.common import Response
 from app.models.matches import MatchResponse
@@ -54,7 +55,7 @@ async def get_tournament(tournament_id: str):
 @tournaments_router.post("", status_code=201, response_model=Response)
 async def create_tournament(tournament: TournamentCreate, current_user: dict = Depends(get_current_user)):
     tournament_model_dump = tournament.model_dump()
-    current_time = datetime.now(timezone.utc).replace(tzinfo=None)
+    current_time = datetime.now(app_timezone).replace(microsecond=0, tzinfo=None)
     tournament_to_create = {
         **tournament_model_dump,
         "password": bcrypt(tournament_model_dump["password"]),
@@ -89,7 +90,7 @@ async def update_tournament(
     tournament = await db["tournaments"].find_one({"_id": ObjectId(tournament_id)})
     if not tournament:
         raise HTTPException(status_code=404, detail=f"Tournament with id {tournament_id} not found")
-    tournament_update = {**body, "lastUpdateDate": datetime.now(timezone.utc).replace(tzinfo=None)}
+    tournament_update = {**body, "lastUpdateDate": datetime.now(app_timezone).replace(microsecond=0, tzinfo=None)}
     result = await db["tournaments"].find_one_and_update(
         {"_id": ObjectId(tournament_id)}, {"$set": tournament_update}, return_document=True
     )

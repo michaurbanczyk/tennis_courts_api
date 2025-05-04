@@ -1,9 +1,10 @@
-from datetime import datetime, timezone
+from datetime import datetime
 from enum import StrEnum
 from typing import List, Literal, Optional
 
 from pydantic import BaseModel, Field, field_validator
 
+from app.config import app_timezone
 from app.models.common import PyObjectId
 
 
@@ -37,7 +38,7 @@ class MatchResponse(BaseModel):
     id: Optional[PyObjectId] = Field(default_factory=str, alias="_id")
     player1: str = Field(...)
     player2: str = Field(...)
-    plannedStartHour: str = Field(...)
+    plannedStartDate: datetime
     title: str | None = None
     subtitle: str | None = None
     startHour: datetime | None = None
@@ -55,7 +56,7 @@ class MatchResponse(BaseModel):
 class MatchCreate(BaseModel):
     player1: str = Field(...)
     player2: str = Field(...)
-    plannedStartHour: str = Field(...)
+    plannedStartDate: datetime
     tournamentId: str = Field(...)
     title: str | None = None
     subtitle: str | None = None
@@ -66,14 +67,18 @@ class MatchCreate(BaseModel):
         default_factory=lambda: MatchResults(firstServe="", duration="0", games=[{"player1": "0", "player2": "0"}])
     )
     status: Literal["Planned", "Ongoing", "Finished"] = Field(default_factory=lambda: "Planned")
-    createdDate: datetime = Field(default_factory=lambda: datetime.now(timezone.utc).replace(tzinfo=None))
-    lastUpdateDate: datetime = Field(default_factory=lambda: datetime.now(timezone.utc).replace(tzinfo=None))
+    createdDate: datetime = Field(
+        default_factory=lambda: datetime.now(app_timezone).replace(microsecond=0, tzinfo=None)
+    )
+    lastUpdateDate: datetime = Field(
+        default_factory=lambda: datetime.now(app_timezone).replace(microsecond=0, tzinfo=None)
+    )
 
 
 class MatchUpdate(BaseModel):
     player1: str | None = None
     player2: str | None = None
-    plannedStartHour: str | None = None
+    plannedStartDate: datetime | None = None
     title: str | None = None
     subtitle: str | None = None
     transmissionLink: str | None = None

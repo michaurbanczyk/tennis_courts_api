@@ -1,9 +1,10 @@
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import List
 
 from bson import ObjectId
 from fastapi import APIRouter, HTTPException
 
+from app.config import app_timezone
 from app.db.config import db
 from app.models.common import Response
 from app.models.matches import (
@@ -74,14 +75,14 @@ async def update_match(
         raise HTTPException(status_code=404, detail=f"Match with id {match_id} not found")
 
     if match["status"] != MatchStatus.ONGOING and body["status"] == MatchStatus.ONGOING:
-        body["startHour"] = datetime.now(timezone.utc).replace(tzinfo=None)
+        body["startHour"] = datetime.now(app_timezone).replace(microsecond=0, tzinfo=None)
         body["endHour"] = None
     elif body["status"] == MatchStatus.FINISHED:
-        end_hour = datetime.now(timezone.utc).replace(tzinfo=None)
-        body["endHour"] = datetime.now(timezone.utc).replace(tzinfo=None)
+        end_hour = datetime.now(app_timezone).replace(microsecond=0, tzinfo=None)
+        body["endHour"] = datetime.now(app_timezone).replace(microsecond=0, tzinfo=None)
         body["results"]["duration"] = (end_hour - match["startHour"]).seconds
 
-    match_update = {**body, "lastUpdateDate": datetime.now(timezone.utc).replace(tzinfo=None)}
+    match_update = {**body, "lastUpdateDate": datetime.now(app_timezone).replace(microsecond=0, tzinfo=None)}
     result = await db["matches"].find_one_and_update(
         {"_id": ObjectId(match_id)}, {"$set": match_update}, return_document=True
     )
@@ -101,7 +102,7 @@ async def update_match_results(
     if not match:
         raise HTTPException(status_code=404, detail=f"Match with id {match_id} not found")
 
-    match_update = {"results": body, "lastUpdateDate": datetime.now(timezone.utc).replace(tzinfo=None)}
+    match_update = {"results": body, "lastUpdateDate": datetime.now(app_timezone).replace(microsecond=0, tzinfo=None)}
     result = await db["matches"].find_one_and_update(
         {"_id": ObjectId(match_id)}, {"$set": match_update}, return_document=True
     )
