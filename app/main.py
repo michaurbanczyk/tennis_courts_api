@@ -4,6 +4,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
 
+from app.routes.emails import emails_router
 from app.routes.matches import matches_router
 from app.routes.tournaments import tournaments_router
 from app.routes.users import users_router
@@ -22,6 +23,7 @@ app.add_middleware(
 app.include_router(tournaments_router)
 app.include_router(matches_router)
 app.include_router(users_router)
+app.include_router(emails_router)
 
 app.include_router(ws_router)
 
