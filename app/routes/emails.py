@@ -45,7 +45,13 @@ async def send_email_share_tournament_link(body: EmailShareTheLink, current_user
         await send_email_async(
             subject=f"Welcome in {body.tournamentTitle} powered by App Open",
             email_to=body.addressList,
-            template_context={"body": {"title": "Hello World", "name": "John Doe"}},
+            template_context={
+                "body": {
+                    "tournament_title": body.tournamentTitle,
+                    "tournament_password": "temporaryPassword",
+                    "tournament_link": body.tournamentLink,
+                }
+            },
         )
     except Exception:
         raise HTTPException(status_code=500, detail="Email sending has been failed.")
