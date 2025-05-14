@@ -43,7 +43,7 @@ async def send_email_share_tournament_link(body: EmailShareTheLink, current_user
 
     try:
         await send_email_async(
-            subject=f"Welcome in {body.tournamentTitle} powered by App Open",
+            subject=f"Welcome in {body.tournamentTitle} tennis tournament by App Open",
             email_to=body.addressList,
             template_context={
                 "body": {
