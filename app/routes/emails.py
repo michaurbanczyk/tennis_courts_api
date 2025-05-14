@@ -37,7 +37,7 @@ async def send_email_async(subject: str, email_to: list[str], template_context: 
 
 
 @emails_router.post("/share-tournament-link", response_model=Response)
-async def send_email(body: EmailShareTheLink, current_user: dict = Depends(get_current_user)):
+async def send_email_share_tournament_link(body: EmailShareTheLink, current_user: dict = Depends(get_current_user)):
     if not body.addressList or not body.tournamentLink:
         raise HTTPException(status_code=400, detail="Empty email address list or transmission link")
 
