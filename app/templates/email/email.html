@@ -1,20 +1,69 @@
-<head>
-    <title>Email template</title>
-    <link href="email.css" rel="stylesheet">
-</head>
 <html>
-<body>
-<div class="background">
-    <div class="content-box">
-        <h1>Welcome in App Open!</h1>
-        <div class="info-box">
-            <p>You have been added as a player to the score board of the tournament:</p>
-            <h4>{{ body.tournament_title }}</h4>
-            <div class="divider"></div>
-            <p style="margin-bottom: 30px;">Use following password to update your live matches results:</p>
-            <h4>{{ body.tournament_password }}</h4>
-            <div class="divider"></div>
-            <a href="{{ body.tournament_link }}" target="_blank">Go to the board</a>
+<body style="margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Readex Proxxz', sans-serif;">
+<div style="width: 100%;
+    background: #ffffff;
+    padding: 10px;">
+    <div style="margin: 0 auto;
+    width: 90%;
+    text-align: center;
+    background: linear-gradient(90deg, rgba(1, 37, 54, 1) 56%, rgba(1, 126, 166, 1) 89%);
+    clip-path: polygon(
+            0% 0%, /* top-left */ calc(100% - 15px) 0%, /* before top-right cut */ 100% 15px, /* top-right cut */ 100% 100%, /* bottom-right */ 15px 100%, /* bottom-left cut */ 0% calc(100% - 15px) /* before looping to top-left */
+    );
+    border-bottom: 1px solid transparent;">
+        <h1 style="font-size: 26px;
+    background-color: #002f46;
+    padding: 5px 10px;
+    color: white;
+    border-bottom: 2px solid white;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+    letter-spacing: 1px;">Welcome in App Open!</h1>
+        <div style="margin: 30px auto;
+    width: 60%;
+    background-color: rgba(255, 255, 255, 0.5); /* assumes theme.palette.common.white is white */
+    clip-path: polygon(
+            0% 0%, /* top-left */ calc(100% - 15px) 0%, /* before top-right cut */ 100% 15px, /* top-right cut */ 100% 100%, /* bottom-right */ 15px 100%, /* bottom-left cut */ 0% calc(100% - 15px) /* before looping to top-left */
+    );
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 2px solid #e0e0e0; /* assumes theme.palette.grey[300] is #e0e0e0 */
+    padding: 50px;
+    text-align: center;">
+            <p style="font-size: 16px;
+    margin-bottom: 30px;
+    color: white;
+    font-weight: 500;
+    letter-spacing: 1px;">You have been added as a player to the score board of the tournament:</p>
+            <h4 style="font-size: 20px;
+    color: white;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);">{{ body.tournament_title }}</h4>
+            <div style="border: 1px solid white"></div>
+            <p style="font-size: 16px;
+    margin-bottom: 30px;
+    color: white;
+    font-weight: 500;
+    letter-spacing: 1px;">Use following password to update your live matches results:</p>
+            <h4 style="font-size: 20px;
+    color: white;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);">{{ body.tournament_password }}</h4>
+            <div style="border: 1px solid white"></div>
+            <a href="{{ body.tournament_link }}" target="_blank" style="display: block;
+    margin-top: 20px;
+    border: none;
+    background-color: #007BC3;
+    color: white;
+    line-height: 24px;
+    padding: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+    clip-path: polygon(
+            0% 0%, /* top-left */ calc(100% - 15px) 0%, /* before top-right cut */ 100% 15px, /* top-right cut */ 100% 100%, /* bottom-right */ 15px 100%, /* bottom-left cut */ 0% calc(100% - 15px) /* before looping to top-left */
+    );">Go to the board</a>
         </div>
     </div>
 </div>
