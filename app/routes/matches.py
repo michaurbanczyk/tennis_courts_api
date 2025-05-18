@@ -117,7 +117,7 @@ async def verify_password(match_id: str, body: MatchPassword):
     if match:
         match_players = [match["player1"], match["player2"]]
         tournament = await db["tournaments"].find_one({"_id": ObjectId(match["tournamentId"])})
-        players_password = get_players_passwords(tournament["players"], match_players)
+        players_password = get_players_passwords(tournament["players"], match_players, "name")
         if body.password in players_password:
             return {"message": "Password correct"}
         raise HTTPException(status_code=400, detail="Password not correct")

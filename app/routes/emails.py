@@ -1,9 +1,11 @@
 import os
 from pathlib import Path
 
+from bson import ObjectId
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi_mail import ConnectionConfig, FastMail, MessageSchema, MessageType
 
+from app.db.config import db
 from app.models.common import Response
 from app.models.emails import EmailShareTheLink
 from app.routes.users import get_current_user
@@ -38,22 +40,30 @@ async def send_email_async(subject: str, email_to: list[str], template_context: 
 
 @emails_router.post("/share-tournament-link", response_model=Response)
 async def send_email_share_tournament_link(body: EmailShareTheLink, current_user: dict = Depends(get_current_user)):
-    if not body.addressList or not body.tournamentLink:
-        raise HTTPException(status_code=400, detail="Empty email address list or transmission link")
+    tournament = await db["tournaments"].find_one({"_id": ObjectId(body.tournamentId)})
+    if not tournament:
+        raise HTTPException(status_code=404, detail=f"Tournament with id {body.tournamentId} not found")
 
-    try:
-        await send_email_async(
-            subject=f"Welcome in {body.tournamentTitle} tennis tournament by App Open",
-            email_to=body.addressList,
-            template_context={
-                "body": {
-                    "tournament_title": body.tournamentTitle,
-                    "tournament_password": "temporaryPassword",
-                    "tournament_link": body.tournamentLink,
-                }
-            },
-        )
-    except Exception:
-        raise HTTPException(status_code=500, detail="Email sending has been failed.")
+    errors_list = []
+
+    for player in tournament["players"]:
+        try:
+            if player["email"]:
+                await send_email_async(
+                    subject=f"Welcome in {tournament['title']} tennis tournament by App Open",
+                    email_to=[player["email"]],
+                    template_context={
+                        "body": {
+                            "tournament_title": tournament["title"],
+                            "tournament_password": player["password"],
+                            "tournament_link": body.tournamentLink,
+                        }
+                    },
+                )
+        except Exception:
+            errors_list.append(player["name"])
+
+    if errors_list:
+        raise HTTPException(status_code=500, detail=f"Email has not been delivered to: {', '.join(errors_list)}.")
 
     return {"message": "Email has been sent successfully!"}

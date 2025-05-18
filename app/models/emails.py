@@ -2,6 +2,5 @@ from pydantic import BaseModel
 
 
 class EmailShareTheLink(BaseModel):
-    addressList: list[str]
+    tournamentId: str
     tournamentLink: str
-    tournamentTitle: str
