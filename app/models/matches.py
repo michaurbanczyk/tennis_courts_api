@@ -92,3 +92,7 @@ class MatchResultUpdate(BaseModel):
     firstServe: str | None = None
     duration: str | None = None
     games: List[Result] | None = None
+
+
+class MatchPassword(BaseModel):
+    password: str

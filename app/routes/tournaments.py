@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import List, Optional
+from uuid import uuid4
 
 from bson import ObjectId
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -10,14 +11,13 @@ from app.models.common import Response
 from app.models.matches import MatchResponse
 from app.models.tournaments import (
     PaginatedTournamentResponse,
+    PlayerWithPasswords,
     TournamentCreate,
-    TournamentPassword,
     TournamentResponse,
-    TournamentStatus,
     TournamentUpdate,
 )
 from app.routes.users import get_current_user
-from app.utils.hash import bcrypt, verify
+from app.utils.generate_player_password import generate_password
 
 tournaments_router = APIRouter(
     prefix="/tournaments",
@@ -55,10 +55,16 @@ async def get_tournament(tournament_id: str):
 @tournaments_router.post("", status_code=201, response_model=Response)
 async def create_tournament(tournament: TournamentCreate, current_user: dict = Depends(get_current_user)):
     tournament_model_dump = tournament.model_dump()
+
+    for player in tournament_model_dump["players"]:
+        if "id" not in player or not player["id"]:
+            player["id"] = str(uuid4())
+
+        if "password" not in player or not player["password"]:
+            player["password"] = generate_password()
+
     tournament_to_create = {
         **tournament_model_dump,
-        "password": bcrypt(tournament_model_dump["password"]),
-        "status": TournamentStatus.PLANNED,
         "createdBy": current_user["_id"],
     }
     created_tournament = await db["tournaments"].insert_one(tournament_to_create)
@@ -84,9 +90,18 @@ async def update_tournament(
     body: TournamentUpdate,
 ):
     body = body.model_dump(exclude_unset=True)
+
     tournament = await db["tournaments"].find_one({"_id": ObjectId(tournament_id)})
     if not tournament:
         raise HTTPException(status_code=404, detail=f"Tournament with id {tournament_id} not found")
+
+    for player in body["players"]:
+        if "id" not in player or not player["id"]:
+            player["id"] = str(uuid4())
+
+        if "password" not in player or not player["password"]:
+            player["password"] = generate_password()
+
     tournament_update = {**body, "lastUpdateDate": datetime.now(app_timezone).replace(microsecond=0, tzinfo=None)}
     result = await db["tournaments"].find_one_and_update(
         {"_id": ObjectId(tournament_id)}, {"$set": tournament_update}, return_document=True
@@ -114,13 +129,9 @@ async def get_tournaments_matches(
     return tournament_matches
 
 
-@tournaments_router.post("/{tournament_id}/verify-password", response_model=Response)
-async def verify_password(tournament_id: str, body: TournamentPassword):
+@tournaments_router.get("/{tournament_id}/players", response_model=List[PlayerWithPasswords])
+async def get_tournaments_players_with_passwords(tournament_id: str):
     tournament = await db["tournaments"].find_one({"_id": ObjectId(tournament_id)})
-    if tournament:
-        body = body.model_dump()
-        if verify(tournament["password"], body["password"]):
-            return {"message": "Password correct"}
-        else:
-            raise HTTPException(status_code=401, detail="Password not correct")
-    raise HTTPException(status_code=404, detail=f"Tournament with {tournament_id} not found")
+    if not tournament:
+        raise HTTPException(status_code=404, detail=f"Tournament with {tournament_id} not found")
+    return tournament["players"]

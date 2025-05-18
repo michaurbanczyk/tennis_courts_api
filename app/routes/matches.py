@@ -9,12 +9,14 @@ from app.db.config import db
 from app.models.common import Response
 from app.models.matches import (
     MatchCreate,
+    MatchPassword,
     MatchResponse,
     MatchResultUpdate,
     MatchStatus,
     MatchUpdate,
 )
 from app.routes.websocket import connection_manager
+from app.utils.get_players_passwords import get_players_passwords
 
 matches_router = APIRouter(
     prefix="/matches",
@@ -107,3 +109,16 @@ async def update_match_results(
         {"_id": ObjectId(match_id)}, {"$set": match_update}, return_document=True
     )
     return result
+
+
+@matches_router.post("/{match_id}/verify-password", response_model=Response)
+async def verify_password(match_id: str, body: MatchPassword):
+    match = await db["matches"].find_one({"_id": ObjectId(match_id)})
+    if match:
+        match_players = [match["player1"], match["player2"]]
+        tournament = await db["tournaments"].find_one({"_id": ObjectId(match["tournamentId"])})
+        players_password = get_players_passwords(tournament["players"], match_players)
+        if body.password in players_password:
+            return {"message": "Password correct"}
+        raise HTTPException(status_code=400, detail="Password not correct")
+    raise HTTPException(status_code=404, detail=f"Match with {match_id} not found")
