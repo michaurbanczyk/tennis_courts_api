@@ -11,6 +11,7 @@ class UserBase(BaseModel):
     lastName: str
     email: str
     phoneNumber: Optional[str] = None
+    isActive: bool = None
 
 
 class CreateUser(UserBase):

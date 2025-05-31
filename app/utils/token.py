@@ -2,11 +2,14 @@ from datetime import datetime, timedelta, timezone
 
 import jwt
 from fastapi import HTTPException
+from itsdangerous import URLSafeTimedSerializer
 from jwt import InvalidTokenError
 
 SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 2
+
+serializer = URLSafeTimedSerializer(secret_key=SECRET_KEY)
 
 
 def create_access_token(data: dict):
@@ -15,6 +18,14 @@ def create_access_token(data: dict):
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
+
+
+def create_activation_token(email: str):
+    return serializer.dumps(email, salt="activate")
+
+
+def verify_activation_token(token: str):
+    return serializer.loads(token, salt="activate", max_age=86400)
 
 
 def verify_token(token: str):
